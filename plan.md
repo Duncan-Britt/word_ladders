@@ -44,8 +44,13 @@
               - It's a bad solution. Probably should use a smarter method of
                 generating word ladders -->
 
+- instead of 5k, use at least 10k, perhaps 20k for hard mode
+
 Store data on amazon s3 as files
 https://devcenter.heroku.com/articles/active-storage-on-heroku
+  - this solution only works for smaller numbers of words, like the most
+    common 5000 english words. It can't work for 135K, so a database would
+    have to be used for that
 
 Consider Orientdb
 http://orientdb.com/docs/3.0.x/gettingstarted/

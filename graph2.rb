@@ -51,8 +51,11 @@ class WordGraph
       add_vertex(word)
     end
 
+    i = 0
     word_data.each do |word, adjacents|
-      node = find_vertex_by_data(word)
+      # node = find_vertex_by_data(word)
+      node = @vertices[i]
+      i += 1
       adjacents.each do |neighbor|
         link = find_vertex_by_data(neighbor)
         node.neighbors.push(link)
@@ -78,7 +81,7 @@ class WordGraph
     ladder = nil
     loop do
       v = random_vertex
-      # v = find_vertex_by_data('tear')
+      # v = find_vertex_by_data('boulier')
       ladder = make_sub_ladder(v: v, length: length, prev: [])
       break if ladder
     end
@@ -87,12 +90,10 @@ class WordGraph
 
   def make_sub_ladder(v: random_vertex, length: 3, prev: [])
     ladder = [v]
-    # printf("TOP length: %d ladder: %s\n", length, ladder.map { |v| v.data }.to_s)
     return ladder if ladder.length == length
 
     neighbors = v.neighbors - prev
     neighbors.select! do |neighbor|
-      # printf("prev: %s neighbor: %s\n", prev.map{|v|v.data}.to_s, neighbor.data.to_s)
       prev.none? { |v| adjacent?(v.data, neighbor.data) }
     end
 
@@ -165,10 +166,9 @@ class WordGraph
 end
 
 english_words = Psych.load_file("words.yml")
-
+p 'here'
 word_graph = WordGraph.new(english_words)
-
-# word_graph.write
+p 'there'
 # v = word_graph.find_vertex_by_data('along')
 # p v.neighbors.map { |n| n.data }
 # p word_graph.make_ladder(50)

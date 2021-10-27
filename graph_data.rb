@@ -8,18 +8,18 @@
 require 'CSV'
 require 'yaml'
 
-words = File.readlines('./cmudict.dict.txt').map do |line|
-  if data = line.match(/^[a-z]+\b/)
-    data.to_s
-  else
-    nil
-  end
-end
+# words = File.readlines('./cmudict.dict.txt').map do |line|
+#   if data = line.match(/^[a-z]+\b/)
+#     data.to_s
+#   else
+#     nil
+#   end
+# end
 
-words.select! { |word| word }
-# p words.all? { |word| word.match(/^[a-z]+$/) } # true
-words.map! { |word| word.downcase }
-words.uniq!
+# words.select! { |word| word }
+# # p words.all? { |word| word.match(/^[a-z]+$/) } # true
+# words.map! { |word| word.downcase }
+# words.uniq!
 # i = 0
 # words.reverse_each { |word| p word; break if i == 50; i += 1 }
 
@@ -79,7 +79,7 @@ class WordGraph
   end
 
   def write
-    File.open("words.yml", "w") do |file|
+    File.open("words5k.yml", "w") do |file|
       @vertices.each do |vertex|
         word_data = { vertex.data => vertex.neighbors.map { |n| n.data } }
         file.write(word_data.to_yaml)
@@ -182,18 +182,18 @@ class WordGraph
   end
 end
 
-# common_words = CSV.parse(
-#   File.read("./english_words.csv"),
-#   headers: :first_row
-# ).map { |row| row[1] }
-#
-# common_words.map! { |word| word.downcase }
-# common_words.select! { |word| word.match?(/^[a-z]+$/) }
-# common_words.uniq!
+common_words = CSV.parse(
+  File.read("./english_words.csv"),
+  headers: :first_row
+).map { |row| row[1] }
 
-word_graph = WordGraph.new(words)
+common_words.map! { |word| word.downcase }
+common_words.select! { |word| word.match?(/^[a-z]+$/) }
+common_words.uniq!
 
-word_graph.write
+word_graph = WordGraph.new(common_words)
+
+# word_graph.write
 # v = word_graph.find_vertex_by_data('along')
 # p v.neighbors.map { |n| n.data }
 # p word_graph.make_ladder(50)
