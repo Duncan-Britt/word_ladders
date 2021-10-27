@@ -1,0 +1,13 @@
+-- CREATE TABLE words5000 (
+--   id serial PRIMARY KEY,
+--   word varchar(14) UNIQUE NOT NULL,
+--   length smallint NOT NULL
+-- );
+
+-- DROP TABLE words450k;
+--
+-- CREATE TABLE words450k (
+--   id serial PRIMARY KEY,
+--   word varchar(14) UNIQUE NOT NULL,
+--   length smallint NOT NULL
+-- );
