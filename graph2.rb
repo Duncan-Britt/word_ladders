@@ -44,8 +44,20 @@ end
 class WordGraph
   attr_accessor :vertices
 
-  def initialize(words)
+  def initialize(word_data)
+    @vertices = []
 
+    word_data.each do |word, _|
+      add_vertex(word)
+    end
+
+    word_data.each do |word, adjacents|
+      node = find_vertex_by_data(word)
+      adjacents.each do |neighbor|
+        link = find_vertex_by_data(neighbor)
+        node.neighbors.push(link)
+      end
+    end
   end
 
   def write
@@ -152,11 +164,13 @@ class WordGraph
   end
 end
 
-word_graph = WordGraph.new()
+english_words = Psych.load_file("words.yml")
+
+word_graph = WordGraph.new(english_words)
 
 # word_graph.write
 # v = word_graph.find_vertex_by_data('along')
 # p v.neighbors.map { |n| n.data }
 # p word_graph.make_ladder(50)
 # p word_graph.shortest_path('army', 'can')
-# p word_graph.make_puzzle(10)
+p word_graph.make_puzzle(10)

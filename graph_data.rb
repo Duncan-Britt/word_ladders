@@ -182,18 +182,18 @@ class WordGraph
   end
 end
 
-common_words = CSV.parse(
-  File.read("./english_words.csv"),
-  headers: :first_row
-).map { |row| row[1] }
+# common_words = CSV.parse(
+#   File.read("./english_words.csv"),
+#   headers: :first_row
+# ).map { |row| row[1] }
+#
+# common_words.map! { |word| word.downcase }
+# common_words.select! { |word| word.match?(/^[a-z]+$/) }
+# common_words.uniq!
 
-common_words.map! { |word| word.downcase }
-common_words.select! { |word| word.match?(/^[a-z]+$/) }
-common_words.uniq!
+word_graph = WordGraph.new(words)
 
-word_graph = WordGraph.new(common_words)
-
-# word_graph.write
+word_graph.write
 # v = word_graph.find_vertex_by_data('along')
 # p v.neighbors.map { |n| n.data }
 # p word_graph.make_ladder(50)
