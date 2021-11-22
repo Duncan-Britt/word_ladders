@@ -8,7 +8,7 @@ class WordLadder
 
   def initialize(min_size = 3, max_size = Float::INFINITY)
     @length = 0
-    while @length < min_size || @length > max_size
+    while @length < min_size || @length > max_size || @words == :timeout
       @words = @@word_graph.make_puzzle(GRAPH_DEPTH_MODIFIER)
       @length = @words.length
     end

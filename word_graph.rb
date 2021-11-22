@@ -18,6 +18,12 @@ class Vertex
 
     queue = [[self]]
     while (queue.length != 0)
+      if queue.length > 1_000_000
+        puts ''
+        p :timeout
+        puts ''
+        return :timeout
+      end
       path = queue.shift
       node = path[-1]
       return path.map { |n| n.data } if node == end_point

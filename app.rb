@@ -79,6 +79,10 @@ def matches_last?(word)
   return adjacent?(session[:ladder].last, word)
 end
 
+def last_step?
+  session[:steps].length === session[:ladder].length - 3
+end
+
 def init_test_words
   words = File.readlines('./cmudict.dict.txt').map do |line|
     if data = line.match(/^[a-z]+\b/)
@@ -104,11 +108,19 @@ end
 
 post '/' do
   step = params[:word]
+
   if valid_step?(step)
-    if matches_last?(step)
-      session[:solved] = true
+    session[:solved] = true if matches_last?(step)
+      
+    if last_step?
+      if session[:solved]
+        session[:steps].push(step)
+      else
+        session[:error] = "The last step must also match the end word"
+      end
+    else
+      session[:steps].push(step)
     end
-    session[:steps].push(step)
   else
     session[:error] = "That doesn't appear to be a word."
   end

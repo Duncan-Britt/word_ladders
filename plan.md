@@ -59,3 +59,25 @@ https://devcenter.heroku.com/articles/active-storage-on-heroku
 Consider Orientdb
 http://orientdb.com/docs/3.0.x/gettingstarted/
 https://orientdb.org/cloud/orientdb-amazon-web-services
+
+
+
+
+- Bugs to fix
+  - deleting several in a row, then reload <!-- caused by deleting too fast -->
+  - general slowness, glitchyness
+  <!-- - must not allow attempts to go over limit -->
+  <!-- - prevent infinite loops -->
+
+- features to implement
+  - reveal solution
+  - better styles
+  - mobile compatibility
+  - store cmudict in PostgreSQL
+  - cache ladders in PostgreSQL
+    - get/store data on difficulty/ratings of ladders
+  - cache previous solutions
+  - user accounts
+    - leaderboard position
+    - user submitted ladders
+      - beta phase
