@@ -44,13 +44,17 @@
               - It's a bad solution. Probably should use a smarter method of
                 generating word ladders -->
 
-- instead of 5k, use at least 10k, perhaps 20k for hard mode
+- use just 5k word set. More words = lower quality words
+- No need to store graph of words in a graph database. File storage is plenty fast
+  for 5k words. Although, you could, and that might be interesting
+- can store a longer list of words in PostgreSQL just to validate user input
+  words which may not be in the 5k word set.
 
 Store data on amazon s3 as files
 https://devcenter.heroku.com/articles/active-storage-on-heroku
   - this solution only works for smaller numbers of words, like the most
     common 5000 english words. It can't work for 135K, so a database would
-    have to be used for that
+    have to be used for that.
 
 Consider Orientdb
 http://orientdb.com/docs/3.0.x/gettingstarted/

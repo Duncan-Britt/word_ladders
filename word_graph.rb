@@ -1,10 +1,3 @@
-# Need to use cmudictionary, 5000 words is not enough
-#
-# Need to allow for words of different lengths to be adjacent if one off
-# - can't simply categories lists by word length
-#
-# SELECT * FROM words450k ORDER BY random() LIMIT 1;
-
 require 'yaml'
 
 class Vertex
@@ -29,8 +22,6 @@ class Vertex
       node = path[-1]
       return path.map { |n| n.data } if node == end_point
 
-      # printf("path: %s\n\n", path.map { |e| e.data }.to_s)
-
       node.neighbors.each do |neighbor|
         next if path.include?(neighbor)
         new_path = path.dup
@@ -44,8 +35,10 @@ end
 class WordGraph
   attr_accessor :vertices
 
-  def initialize(word_data)
+  def initialize()
     @vertices = []
+
+    word_data = Psych.load_file("words5k.yml")
 
     word_data.each do |word, _|
       add_vertex(word)
@@ -53,7 +46,6 @@ class WordGraph
 
     i = 0
     word_data.each do |word, adjacents|
-      # node = find_vertex_by_data(word)
       node = @vertices[i]
       i += 1
       adjacents.each do |neighbor|
@@ -99,11 +91,9 @@ class WordGraph
 
     return nil if neighbors.empty?
     neighbors.shuffle!
-
     sub_ladder = nil
     neighbors.each do |n|
       sub_ladder = make_sub_ladder(v: n, length: length - 1, prev: ladder + prev)
-
       break if sub_ladder
     end
 
@@ -165,12 +155,7 @@ class WordGraph
   end
 end
 
-english_words = Psych.load_file("words.yml")
-p 'here'
-word_graph = WordGraph.new(english_words)
-p 'there'
-# v = word_graph.find_vertex_by_data('along')
-# p v.neighbors.map { |n| n.data }
-# p word_graph.make_ladder(50)
-# p word_graph.shortest_path('army', 'can')
-p word_graph.make_puzzle(10)
+# english_words = Psych.load_file("words5k.yml")
+# word_graph = WordGraph.new()
+
+# p word_graph.make_puzzle(200)

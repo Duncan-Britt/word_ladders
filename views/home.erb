@@ -1,0 +1,28 @@
+<section class="puzzle">
+  <h2 class="description">
+    From <span class="code-font"><%= @ladder.first %></span> to <span class="code-font"><%= @ladder.last %></span>
+     in <span id="nSteps"><%= @ladder.length - 1 %></span> steps or fewer
+  </h2>
+
+  <article id="ladder" class="ladder">
+    <ul id="list">
+      <li id="step0"><%= @ladder.first %></li>
+      <% @steps.each_with_index do |step, i| %>
+        <li id="step<%= i + 1 %>"><%= step %></li>
+      <% end %>
+      <% if !session[:solved] %>
+        <li>
+          <form id="form" class="step" name="step" action="/" method="post">
+            <input id="next-step" type="text" name="word" value="" required autofocus/>
+          </form>
+        </li>
+      <% end %>
+      <% if session[:error] %>
+        <div class="red-flash">
+          <p><%= session.delete(:error) %></p>
+        </div>
+      <% end %>
+      <li id="final-step"><%= @ladder.last %></li>
+    </ul>
+  </article>
+</section>

@@ -1,0 +1,173 @@
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300&family=Estonia&family=Source+Code+Pro&display=swap');
+
+
+:root {
+  --maroon: #b5004e;
+  --ladder: 'Source Code Pro', monospace;
+  --font-main: 'Estonia', cursive;
+  --font-flash: 'Comfortaa', cursive;
+  --cream: #fff2cc;
+  --dark-bg: #292929;
+  --text: #292929;
+  --dark-text: #d1d1d1;
+  --green: #0cad00;
+}
+
+body {
+  transition: background-color 0.2s linear;
+  filter: invert(0); /* so toggle dark doesn't move */
+  background-color: var(--cream);
+  color: var(--text);
+}
+
+.dark-mode {
+  transition: background-color 0.2s linear;
+  background-color: var(--dark-bg);
+  color: var(--dark-text);
+  /* filter: invert(1) hue-rotate(180deg); */
+}
+
+#toggle-dark {
+  position: fixed;
+  right: 60px;
+  top: 20px;
+}
+
+#toggle-dark .checkbox {
+  opacity: 0;
+  position: absolute;
+}
+
+#toggle-dark .label {
+  background-color: #111;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px;
+  border-radius: 50px;
+  position: relative;
+  height: 26px;
+  width: 50px;
+}
+
+#toggle-dark .ball {
+  background-color: #fff;
+  border-radius: 50px;
+  position: absolute;
+  top: 7px;
+  left: 4px;
+  width: 22px;
+  height: 22px;
+  transition: transform 0.2s linear;
+}
+
+#toggle-dark .toggled-ball {
+  background-color: #fff;
+  border-radius: 50px;
+  position: absolute;
+  top: 7px;
+  left: 4px;
+  width: 22px;
+  height: 22px;
+  transition: transform 0.2s linear;
+  transform: translateX(30px);
+}
+
+#toggle-dark .checkbox:checked + .label .ball {
+  transform: translateX(30px);
+}
+
+#toggle-dark .checkbox:checked + .label .toggled-ball {
+  transform: translateX(-2px);
+}
+
+#toggle-dark .sun {
+  width: 0.35em;
+  height: 0.35em;
+}
+
+#toggle-dark .moon {
+  height: 0.35em;
+  width: 0.35em;
+}
+
+header {
+  margin-top: 30px;
+  margin-bottom: 10px;
+  font-size: 60px;
+  font-family: var(--font-main);
+  text-align: center;
+}
+
+.puzzle .description {
+  font-size: 40px;
+  text-align: center;
+  font-family: var(--font-main);
+}
+
+.code-font{
+  color: var(--maroon);
+  font-size: 20px;
+  font-family: var(--ladder);
+}
+
+.victory {
+  color: var(--green);
+  font-size: 20px;
+  font-family: var(--ladder);
+}
+
+.ladder {
+  font-family: var(--ladder);
+  line-height: 1.8em;
+  font-size: 20px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+.ladder input[type=text] {
+  font-family: var(--ladder);
+  color: var(--text);
+  text-align: center;
+  transition: background-color 0.2s linear;
+  background-color: var(--cream);
+  font-size: 20px;
+  border-style: none;
+}
+
+.dark-mode .ladder input[type=text] {
+  transition: background-color 0.2s linear;
+  background-color: var(--dark-bg);
+  color: var(--dark-text);
+}
+
+.ladder input[type=text]:focus {
+  outline: none;
+}
+
+.red-flash {
+  color: var(--maroon);
+  font-family: var(--font-flash);
+  font-size: 15px;
+}
+
+footer .nav input[type=submit] {
+  background-color: inherit;
+  padding: 2px 14px;
+  border-radius: 50px;
+  border-style: solid;
+  border-color: var(--maroon);
+  font-family: var(--ladder);
+  font-size: 14px;
+  color: var(--maroon);
+  display: flex;
+  text-align: center;
+}
+
+.nav {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}
