@@ -11,6 +11,7 @@
   --text: #292929;
   --dark-text: #d1d1d1;
   --green: #0cad00;
+  --hover-maroon: #bd6f76;
 }
 
 body {
@@ -164,6 +165,13 @@ footer .nav input[type=submit] {
   color: var(--maroon);
   display: flex;
   text-align: center;
+}
+
+footer .nav input[type=submit]:hover {
+  transition: color 0.2s linear;
+  transition: border-color 0.2s linear;
+  color: var(--hover-maroon);
+  border-color: var(--hover-maroon);
 }
 
 .nav {

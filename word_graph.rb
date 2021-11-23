@@ -13,6 +13,10 @@ class Vertex
     self.neighbors[idx]
   end
 
+  def inspect
+    "data: #{@data}, neighbors: #{@neighbors.map { |n| n.data }}"
+  end
+
   def traverse(end_point)
     return [self.data, end_point.data] if self.neighbors.include? end_point
 
@@ -44,19 +48,23 @@ class WordGraph
   def initialize()
     @vertices = []
 
-    word_data = Psych.load_file("words5k.yml")
+    word_data = Psych.load_file("graph.yml")
 
-    word_data.each do |word, _|
+    word_data.each do |hash, _|
+      word = hash.keys[0]
       add_vertex(word)
     end
 
     i = 0
-    word_data.each do |word, adjacents|
+    word_data.each do |hash|
       node = @vertices[i]
       i += 1
-      adjacents.each do |neighbor|
-        link = find_vertex_by_data(neighbor)
-        node.neighbors.push(link)
+
+      hash.each do |word, adjacents|
+        adjacents.each do |neighbor|
+          link = find_vertex_by_data(neighbor)
+          node.neighbors.push(link)
+        end
       end
     end
   end
@@ -79,7 +87,6 @@ class WordGraph
     ladder = nil
     loop do
       v = random_vertex
-      # v = find_vertex_by_data('boulier')
       ladder = make_sub_ladder(v: v, length: length, prev: [])
       break if ladder
     end
@@ -92,7 +99,7 @@ class WordGraph
 
     neighbors = v.neighbors - prev
     neighbors.select! do |neighbor|
-      prev.none? { |v| adjacent?(v.data, neighbor.data) }
+      prev.none? { |v| WordGraph.adjacent?(v.data, neighbor.data) }
     end
 
     return nil if neighbors.empty?
@@ -126,32 +133,52 @@ class WordGraph
     vertices.length
   end
 
-  def adjacent?(word, other)
-    if word.include?(other)
-      word.length - 1 == other.length
-    elsif other.include?(word)
-      other.length - 1 == word.length
-    else
-      oneLetterDifference?(word, other)
-    end
-  end
-
-  def oneLetterDifference?(word, other)
-    return false if word.length != other.length
-
-    different_chr_count = 0
-    i = 0
-    while (i < word.length) do
-      if word[i] != other[i]
-        different_chr_count += 1
+  def self.adjacent?(word, other)
+    if word.length == other.length
+      different_chr_count = 0
+      i = 0
+      while (i < word.length)
+        different_chr_count += 1 if word[i] != other[i]
+        return false if different_chr_count > 1
+        i += 1
       end
 
-      return false if different_chr_count > 1
-
+      return different_chr_count === 1
+    elsif word.length == other.length + 1
+      i = 0
+      j = 0
+      while (word[i] == other[j] && i < word.length)
+        i += 1
+        j += 1
+      end
       i += 1
-    end
 
-    different_chr_count === 1
+      while (i < word.length)
+        return false if word[i] != other[j]
+        i += 1
+        j += 1
+      end
+
+      true
+    elsif other.length == word.length + 1
+      i = 0
+      j = 0
+      while (word[i] == other[j] && i < word.length)
+        i += 1
+        j += 1
+      end
+      j += 1
+
+      while (j < other.length)
+        return false if word[i] != other[j]
+        i += 1
+        j += 1
+      end
+
+      true
+    else
+      false
+    end
   end
 
   def shortest_path(word, other)
@@ -163,5 +190,7 @@ end
 
 # english_words = Psych.load_file("words5k.yml")
 # word_graph = WordGraph.new()
-
+# p 'here!!'
+# p word_graph.find_vertex_by_data('lone')
 # p word_graph.make_puzzle(200)
+# p word_graph.random_vertex

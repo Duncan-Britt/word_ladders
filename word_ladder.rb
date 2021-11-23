@@ -16,4 +16,8 @@ class WordLadder
     @first = @words[0]
     @last = @words[@words.length - 1]
   end
+
+  def self.adjacent?(word, other)
+    WordGraph.adjacent(word, other)
+  end
 end

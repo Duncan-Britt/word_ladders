@@ -34,7 +34,7 @@ def adjacent?(word, other)
     end
     j += 1
 
-    while (j < word.length)
+    while (j < other.length)
       return false if word[i] != other[j]
       i += 1
       j += 1
@@ -46,4 +46,4 @@ def adjacent?(word, other)
   end
 end
 
-p adjacent? 'black', 'bloackk'
+p adjacent? 'busy', 'buy'

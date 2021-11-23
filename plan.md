@@ -70,14 +70,15 @@ https://orientdb.org/cloud/orientdb-amazon-web-services
   <!-- - prevent infinite loops -->
 
 - features to implement
-  - reveal solution
   - better styles
   - mobile compatibility
   - store cmudict in PostgreSQL
   - cache ladders in PostgreSQL
     - get/store data on difficulty/ratings of ladders
-  - cache previous solutions
+  - cache previous distinct solutions
   - user accounts
     - leaderboard position
     - user submitted ladders
       - beta phase
+  - info page
+  - allow ladders to be truncated by admin based on user solutions

@@ -6,6 +6,7 @@
 # SELECT * FROM words450k ORDER BY random() LIMIT 1;
 
 require 'CSV'
+require 'yaml'
 
 # words = File.readlines('./cmudict.dict.txt').map do |line|
 #   if data = line.match(/^[a-z]+\b/)
@@ -113,36 +114,81 @@ class WordGraph
   end
 
   def adjacent?(word, other)
-    if word.include?(other)
-      word.length - 1 == other.length
-    elsif other.include?(word)
-      other.length - 1 == word.length
+    if word.length == other.length
+      different_chr_count = 0
+      i = 0
+      while (i < word.length)
+        different_chr_count += 1 if word[i] != other[i]
+        return false if different_chr_count > 1
+        i += 1
+      end
+
+      return different_chr_count === 1
+    elsif word.length == other.length + 1
+      i = 0
+      j = 0
+      while (word[i] == other[j] && i < word.length)
+        i += 1
+        j += 1
+      end
+      i += 1
+
+      while (i < word.length)
+        return false if word[i] != other[j]
+        i += 1
+        j += 1
+      end
+
+      true
+    elsif other.length == word.length + 1
+      i = 0
+      j = 0
+      while (word[i] == other[j] && i < word.length)
+        i += 1
+        j += 1
+      end
+      j += 1
+
+      while (j < other.length)
+        return false if word[i] != other[j]
+        i += 1
+        j += 1
+      end
+
+      true
     else
-      oneLetterDifference?(word, other)
+      false
     end
   end
 
-  def oneLetterDifference?(word, other)
-    return false if word.length != other.length
+  def write
+    # File.open("graph.yml", "w") do |file|
+    #   @vertices.each do |vertex|
+    #     word_data = { vertex.data => vertex.neighbors.map { |n| n.data } }
+    #     file.write(word_data.to_yaml)
+    #   end
+    # end
 
-    different_chr_count = 0
-    i = 0
-    while (i < word.length) do
-      if word[i] != other[i]
-        different_chr_count += 1
+    data = []
+
+    File.open("graph.yml", "w") do |file|
+      @vertices.each do |vertex|
+        word_data = { vertex.data => vertex.neighbors.map { |n| n.data } }
+        data.push(word_data)
       end
 
-      return false if different_chr_count > 1
-
-      i += 1
+      file.write(Psych.dump(data))
     end
 
-    different_chr_count === 1
+    # File.open("graph.yml", "w") do |file|
+    #   file.write(Psych.dump(word_ladders))
+    # end
+
   end
 end
 
 common_words = CSV.parse(
-  File.read("./english_words.csv"),
+  File.read("./prototype_1/english_words.csv"),
   headers: :first_row
 ).map { |row| row[1] }
 
@@ -150,8 +196,10 @@ common_words.map! { |word| word.downcase }
 common_words.select! { |word| word.match?(/^[a-z]+$/) }
 common_words.uniq!
 
-word_graph = WordGraph.new(common_words[0..2000])
-# v = word_graph.find_vertex_by_data('along')
+word_graph = WordGraph.new(common_words)
+# word_graph.write
+
+# v = word_graph.find_vertex_by_data('busy')
 # p v.neighbors.map { |n| n.data }
-lad = word_graph.make_ladder(10)
-p lad.map { |v| v.data }
+# lad = word_graph.make_ladder(10)
+# p lad.map { |v| v.data }
