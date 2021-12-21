@@ -1,0 +1,63 @@
+<% content_for :title do %>
+  Login -
+<% end %>
+
+<% content_for :stylesheet do %>
+  <link rel="stylesheet" href="/stylesheets/login.css">
+<% end %>
+
+<% content_for :javascript do %>
+  <script src="/javascripts/login.js" type="text/javascript"></script>
+<% end %>
+
+<% content_for :nav do %>
+  <ul>
+    <li><a href="/play">play</a></li>
+  </ul>
+<% end %>
+
+<% if session[:error] %>
+  <p class="flash-error">
+    <%= session.delete(:error) %>
+  </p>
+<% end %>
+
+<% if session[:success] %>
+  <p class="flash-success">
+    <%= session.delete(:success) %>
+  </p>
+<% end %>
+
+<form id="login_form" action="/login" method="post">
+  <h1>Login</h1>
+  <fieldset>
+    <p>
+      <label for="loginUsername">username:</label>
+      <input id="loginUsername" type="text" name="username" />
+    </p>
+    <p>
+      <label for="loginPassword">password:</label>
+      <input id="loginPassword" type="text" name="password" />
+    </p>
+    <p>
+      <button type="submit">login</button>
+    </p>
+  </fieldset>
+</form>
+
+<form id="signup_form" action="/sign_up" method="post">
+  <h1>Sign Up</h1>
+  <fieldset>
+    <p>
+      <label for="signupUsername">username:</label>
+      <input id="signupUsername" type="text" name="username" />
+    </p>
+    <p>
+      <label for="signupPassword">password:</label>
+      <input id="signupPassword" type="text" name="password" />
+    </p>
+    <p>
+      <button type="submit">signup</button>
+    </p>
+  </fieldset>
+</form>

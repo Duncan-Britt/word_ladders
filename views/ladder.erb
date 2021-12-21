@@ -1,0 +1,20 @@
+<ul data-n-usr-steps="<%= session[:steps].length %>">
+  <li><%= @first %></li>
+  <% session[:steps].each do |step| %>
+    <li><%= step %></li>
+  <% end %>
+  <p id="frontendFlash" class="flash-error"></p>
+  <% if session[:error] %>
+    <p id="backendFlash" class="flash-error">
+      <%= session.delete(:error) %>
+    </p>
+  <% end %>
+  <li id="input_li">
+    <form action="/step" method="post">
+      <fieldset>
+        <input type="text" name="step" autocomplete="off" autocorrect="off" autofocus/>
+      </fieldset>
+    </form>
+  </li>
+  <li><%= @last %></li>
+</ul>

@@ -1,9 +1,15 @@
+# frozen_string_literal: true
+
 require "sinatra"
 require "sinatra/reloader" if development?
 require 'sinatra/content_for'
 require "tilt/erubis"
+require "bcrypt"
+require "pg"
 require 'json'
-require_relative 'word_ladder'
+
+require_relative './lib/database'
+require_relative './lib/word_ladder.rb'
 
 configure do
   enable :sessions
@@ -12,31 +18,22 @@ configure do
 end
 
 before do
-  init_test_words
-  session[:ladder] ||= WordLadder.new
-  session[:steps] ||= []
   session[:dark] == 1
+  init_test_words
+  session[:ladder] ||= init_ladder
+  session[:steps] ||= []
   p session[:ladder]
 end
 
-helpers do
+def init_ladder
+  ladder = WordLadder.new
 
-end
-
-def valid_step?(step)
-  @test_words.include?(step)
-end
-
-def matches_last?(word)
-  return WordGraph.adjacent?(session[:ladder].last, word)
-end
-
-def last_step?
-  session[:steps].length === session[:ladder].length - 3
+  # session[:puzzle_id] =
+  return ladder
 end
 
 def init_test_words
-  words = File.readlines('./cmudict.dict.txt').map do |line|
+  words = File.readlines('./data/cmudict.txt').map do |line|
     if data = line.match(/^[a-z]+\b/)
       data.to_s
     else
@@ -51,52 +48,174 @@ def init_test_words
   @test_words = words
 end
 
-get '/' do
-  @ladder = session[:ladder]
-  @steps = session[:steps]
-  @dark = session[:dark]
-  erb :home, layout: :layout
+def is_a_word?(word)
+  @test_words.include?(word)
 end
 
-get '/reveal_solutions' do
-  @ladder = session[:ladder]
+def ladder_complete?
+  WordLadder.adjacent?(session[:steps].last, session[:ladder].last)
+end
+
+get '/' do
+  redirect '/play'
+end
+
+get '/play' do
+  if session[:complete_ladder]
+    redirect '/play/victory'
+  end
+  @dark = session[:dark]
+  @first = session[:ladder].first
+  @last = session[:ladder].last
+  @length = session[:ladder].length
+  erb :play, layout: :layout
+end
+
+get '/play/victory' do
+  @dark = session[:dark]
+  @first = session[:ladder].first
+  @last = session[:ladder].last
+  @length = session[:ladder].length
+  erb :victory, layout: :layout
+end
+
+get '/new_game' do
+  session[:complete_ladder] = false
+  session[:ladder] = WordLadder.new
+  session[:steps] = []
+  redirect '/play'
+end
+
+get '/solutions/:puzzle_id' do
+  puts "\n"
+  p params[:puzzle_id]
+  puts "\n"
   erb :solutions, layout: :layout
 end
 
-post '/' do
-  step = params[:word]
-
-  if valid_step?(step)
-    session[:solved] = true if matches_last?(step)
-
-    if last_step?
-      if session[:solved]
-        session[:steps].push(step)
-      else
-        session[:error] = "The last step must also match the end word"
-      end
-    else
-      session[:steps].push(step)
-    end
-  else
-    session[:error] = "That doesn't appear to be a word."
-  end
-  redirect '/'
+get '/login' do
+  erb :login, layout: :layout
 end
 
-post '/step_back' do
-  session[:steps] = session[:steps][0..-2]
-  status 204
+get '/logout' do
+  session.delete(:user_id)
+  session.delete(:username)
+  redirect '/play'
+end
+
+get '/account' do
+  erb :account, layout: :layout
+end
+
+get '/account/edit/username' do
+  erb :edit_username, layout: :layout
+end
+
+get '/account/edit/password' do
+  erb :edit_password, layout: :layout
+end
+
+post '/step' do
+  input_word = params[:step]
+  if is_a_word?(input_word)
+    session[:steps].push(input_word)
+
+    if ladder_complete?
+      session[:complete_ladder] = true
+      session[:success] = "Solved! Great Work!"
+      status 301
+      JSON.generate({ path: '/play/victory' })
+    else
+      @first = session[:ladder].first
+      @last = session[:ladder].last
+      status 201
+      erb :ladder, layout: false
+    end
+  else
+    status 204
+  end
+end
+
+delete '/step' do
+  session[:steps].pop
+  @first = session[:ladder].first
+  @last = session[:ladder].last
+  status 201
+  erb :ladder, layout: false
+end
+
+post '/sign_up' do
+  input_username = params[:username]
+  input_password = params[:password]
+  if (session[:user_id] = Database.new_user(input_username, input_password))
+    session[:username] = input_username
+    session[:success] = "Account created successfully. You are logged in"
+    redirect '/'
+  else
+    session[:error] = "That username is taken. Try another"
+  end
+end
+
+post '/login' do
+  input_username = params[:username]
+  input_password = params[:password]
+  if (session[:user_id] = Database.auth(input_username, input_password))
+    session[:username] = input_username
+    session[:success] = "You have been logged in successfully"
+    redirect '/'
+  else
+    session[:error] = "The username or password you enterd was incorrect"
+    erb :login, layout: :layout
+  end
+end
+
+put '/username' do
+  input_username = params[:new_username]
+  if Database.account_exists?(input_username)
+    status 403
+    "Sorry, that username is taken"
+  else
+    res = Database.update_username(session[:user_id], input_username)
+    if res.cmd_status == "UPDATE 1"
+      session[:username] = input_username
+      session[:success] = "Username updated successfully"
+      status 204
+    else
+      p "error"
+    end
+  end
+end
+
+put '/password' do
+  input_password = params[:new_password]
+  res = Database.update_password(session[:user_id], input_password)
+  if res.cmd_status == "UPDATE 1"
+    session[:success] = "Username updated successfully"
+    status 204
+  else
+    p "error"
+  end
+end
+
+get '/delete_account' do
+  erb :delete_account, layout: :layout
+end
+
+post '/delete_account' do
+  input_username = params[:username]
+  input_password = parrams[:password]
+  if Database.delete_user(input_username, input_password)
+    session.delete(:user_id)
+    session.delete(:username)
+    session[:success] = "Your account has been deleted"
+    redirect '/'
+  else
+    session[:error] = "The username or password you enterd was incorrect"
+    erb :delete_account, layout: :layout
+  end
 end
 
 post '/toggle_dark_mode' do
   session[:dark] ^= 1
   status 204
-end
-
-post '/new_puzzle' do
-  session[:ladder] = WordLadder.new
-  session[:steps] = []
-  session[:solved] = false
-  redirect '/'
 end

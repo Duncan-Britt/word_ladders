@@ -1,0 +1,30 @@
+#header_nav li {
+  display: inline-block;
+  margin-left: 80px;
+}
+
+form {
+  width: 80%;
+  margin: 80px auto 0 auto;
+  font-size: 40px;
+  font-family: var(--font-main);
+}
+
+input[type="text"] {
+  widtH: 320px;
+  font-size: 40px;
+  font-family: var(--ladder);
+}
+
+button {
+  font-size: 30px;
+  font-family: var(--font-main);
+}
+
+#flash-error {
+  visibility: hidden;
+  text-align: center;
+  font-size: 40px;
+  font-family: var(--font-main);
+  color: var(--maroon);
+}

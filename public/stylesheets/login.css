@@ -1,0 +1,27 @@
+#login_form {
+  margin-top: 100px;
+  font-size:40px;
+  font-family: var(--font-main);
+  text-align: center;
+}
+
+#signup_form {
+  margin-top: 100px;
+  font-size:40px;
+  font-family: var(--font-main);
+  text-align: center;
+}
+
+fieldset > * {
+  margin: 20px 0;
+}
+
+button {
+  font-size:40px;
+  font-family: var(--font-main);
+}
+
+form input[type="text"] {
+  font-size:40px;
+  font-family: var(--ladder);
+}

@@ -1,0 +1,20 @@
+table {
+  width: 80%;
+  margin: 80px auto 0 auto;
+  font-size: 40px;
+  font-family: var(--font-main);
+  text-align: left;
+  line-height: 2em;
+}
+
+#stats {
+  width: 80%;
+  margin: 80px auto 0 auto;
+  font-size: 40px;
+  font-family: var(--font-main);
+  line-height: 2em;
+}
+
+a {
+  text-decoration: underline;
+}
