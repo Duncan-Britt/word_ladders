@@ -100,7 +100,10 @@ document.addEventListener("DOMContentLoaded", () => {
       elements.input.value = elements.input.value.toLowerCase();
       ladder.prevInput = elements.input.value;
 
-      if (isLastStep() && isAdjacent(elements.input.value, ladder.last)) {
+      if (isLastStep() &&
+        isAdjacent(elements.input.value, ladder.last) &&
+        isAdjacent(elements.input.value, ladder.prev)) {
+          
         submitStep();
         return
       }
@@ -123,11 +126,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // BIND EVENT HANDLERS
   bind();
 });
-
-// touchstart
-// touchsnd
-// touchmove
-// touchcancel
 
 // HELPER FUNCTIONS
 function isAdjacent(word, other) {

@@ -1,14 +1,16 @@
--- DROP TABLE IF EXISTS solutions;
--- DROP TABLE IF EXISTS users;
--- DROP TABLE IF EXISTS puzzles;
--- DROP TABLE IF EXISTS generation_words;
--- DROP TABLE IF EXISTS validation_words;
+DROP TABLE IF EXISTS solutions;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS puzzles;
+DROP TABLE IF EXISTS generation_words;
+DROP TABLE IF EXISTS validation_words;
 
 CREATE TABLE IF NOT EXISTS users (
   id serial PRIMARY KEY,
   display_name text UNIQUE NOT NULL,
   password_digest text NOT NULL
 );
+
+INSERT INTO users VALUES (0, 'AI', '');
 
 CREATE TABLE IF NOT EXISTS puzzles (
   id SERIAL PRIMARY KEY,

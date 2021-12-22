@@ -28,7 +28,7 @@ end
 def init_ladder
   ladder = WordLadder.new
 
-  # session[:puzzle_id] =
+  session[:puzzle_id] = Database.add_puzzle(ladder)
   return ladder
 end
 
@@ -72,7 +72,7 @@ get '/play' do
 end
 
 get '/play/victory' do
-  @dark = session[:dark]
+  session[:dark]
   @first = session[:ladder].first
   @last = session[:ladder].last
   @length = session[:ladder].length
@@ -81,7 +81,7 @@ end
 
 get '/new_game' do
   session[:complete_ladder] = false
-  session[:ladder] = WordLadder.new
+  session[:ladder] = init_ladder
   session[:steps] = []
   redirect '/play'
 end
@@ -90,6 +90,7 @@ get '/solutions/:puzzle_id' do
   puts "\n"
   p params[:puzzle_id]
   puts "\n"
+
   erb :solutions, layout: :layout
 end
 
@@ -147,19 +148,20 @@ end
 post '/sign_up' do
   input_username = params[:username]
   input_password = params[:password]
-  if (session[:user_id] = Database.new_user(input_username, input_password))
+  if (session[:user_id] = Database::Users.new_user(input_username, input_password))
     session[:username] = input_username
     session[:success] = "Account created successfully. You are logged in"
     redirect '/'
   else
     session[:error] = "That username is taken. Try another"
+    redirect '/login'
   end
 end
 
 post '/login' do
   input_username = params[:username]
   input_password = params[:password]
-  if (session[:user_id] = Database.auth(input_username, input_password))
+  if (session[:user_id] = Database::Users.auth(input_username, input_password))
     session[:username] = input_username
     session[:success] = "You have been logged in successfully"
     redirect '/'
@@ -171,11 +173,11 @@ end
 
 put '/username' do
   input_username = params[:new_username]
-  if Database.account_exists?(input_username)
+  if Database::Users.account_exists?(input_username)
     status 403
     "Sorry, that username is taken"
   else
-    res = Database.update_username(session[:user_id], input_username)
+    res = Database::Users.update_username(session[:user_id], input_username)
     if res.cmd_status == "UPDATE 1"
       session[:username] = input_username
       session[:success] = "Username updated successfully"
@@ -188,12 +190,12 @@ end
 
 put '/password' do
   input_password = params[:new_password]
-  res = Database.update_password(session[:user_id], input_password)
+  res = Database::Users.update_password(session[:user_id], input_password)
   if res.cmd_status == "UPDATE 1"
     session[:success] = "Username updated successfully"
     status 204
   else
-    p "error"
+    raise StandarError.new("Datbase not updated properly: #{res.cmd_status}")
   end
 end
 
@@ -204,7 +206,7 @@ end
 post '/delete_account' do
   input_username = params[:username]
   input_password = parrams[:password]
-  if Database.delete_user(input_username, input_password)
+  if Database::Users.delete_user(input_username, input_password)
     session.delete(:user_id)
     session.delete(:username)
     session[:success] = "Your account has been deleted"

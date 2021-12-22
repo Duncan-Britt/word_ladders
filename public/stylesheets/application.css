@@ -29,7 +29,6 @@ body {
 
 .flash-error {
   margin: 20px 20px;
-  font-size: 12px;
   font-family: var(--font-main);
   color: var(--maroon);
   text-align: center;

@@ -25,3 +25,8 @@ form input[type="text"] {
   font-size:40px;
   font-family: var(--ladder);
 }
+
+.flash-error {
+  margin-top: 50px;
+  font-size: 40px;
+}
