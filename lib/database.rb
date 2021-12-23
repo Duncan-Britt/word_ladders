@@ -2,15 +2,16 @@
 
 require 'bcrypt'
 require 'pg'
+require 'pry'
 
 DB_NAME = ENV['database'] || 'word_ladders'
 
 module Database
   @psql = if Sinatra::Base.production?
-          PG.connect(ENV['DATABASE_URL'])
-        else
-          PG::Connection.open(:dbname => DB_NAME)
-        end
+            PG.connect(ENV['DATABASE_URL'])
+          else
+            PG::Connection.open(:dbname => DB_NAME)
+          end
 
   def self.connection
     return @psql
@@ -49,9 +50,42 @@ module Database
   end
 
   module Users
+    def self.leader_board_position(user_id)
+      sql = <<~SQL
+        SELECT leader_board_position FROM (
+          SELECT
+          id,
+          RANK() OVER ( ORDER BY n_solved DESC ) leader_board_position
+          FROM users
+        ) as user_ranks
+        WHERE id = $1;
+      SQL
+
+      Database.connection.exec_params(sql, [user_id.to_i]).values[0][0]
+    end
+
+    def self.submit_solution(user_id, puzzle_id, solution)
+      sql = <<~SQL
+        UPDATE users
+        SET n_solved = n_solved + 1
+        WHERE id = $1;
+      SQL
+
+      Database.connection.exec_params(sql, [user_id.to_i])
+
+      sql= <<~SQL
+        INSERT INTO solutions (solution, user_id, puzzle_id)
+                        VALUES($1, $2, $3)
+      SQL
+
+      solution = PG::TextEncoder::Array.new.encode(solution)
+      Database.connection.exec_params(sql, [solution, user_id, puzzle_id])
+    end
+
     def self.auth(input_username, input_password)
       sql = 'SELECT id, password_digest FROM users WHERE display_name = $1'
-      db_id, db_pass = Database.connection.exec_params(sql, [input_username]).values[0]
+      db_id, db_pass = Database.connection.exec_params(sql,
+        [input_username]).values[0]
       if db_id
         BCrypt::Password.new(db_pass) == input_password ? db_id : false
       else
@@ -62,9 +96,12 @@ module Database
     def self.new_user(input_username, input_password)
       return false if self.account_exists?(input_username)
       sql = 'INSERT INTO users (display_name, password_digest) VALUES ($1, $2);'
+
       password = BCrypt::Password.create(input_password)
       Database.connection.exec_params(sql, [input_username, password])
-      true
+
+      sql = 'SELECT id FROM users WHERE display_name = $1;'
+      Database.connection.exec_params(sql, [input_username]).values[0][0]
     end
 
     def self.delete_account(input_username, input_password)
@@ -99,16 +136,43 @@ module Database
       Database.connection.exec_params(sql, [new_password, id])
     end
 
-    def self.top_100
+    def self.solutions(user_id)
       sql = <<~SQL
-        SELECT display_name
-        FROM users
-        WHERE id != 0
-        ORDER BY n_solved DESC
-        LIMIT 100
+        SELECT solutions.solution,
+               puzzles.first,
+               puzzles.last,
+               puzzles.length
+        FROM solutions
+        INNER JOIN puzzles ON (puzzles.id = solutions.puzzle_id)
+        INNER JOIN users ON (solutions.user_id = users.id)
+        WHERE user_id = $1;
       SQL
 
-      Database.connection.exec_params(sql).values.map { |arr| arr[0] }
+      puzzles = []
+      res = Database.connection.exec_params(sql, [user_id])
+      res.each do |puzzle|
+        puzzle["solution"] = PG::TextDecoder::Array.new.decode(puzzle["solution"])
+        puzzles << puzzle
+      end
+      puzzles
+    end
+
+    def self.top_100
+      sql = <<~SQL
+        SELECT
+        display_name,
+        leader_board_position FROM (
+                  SELECT
+                  id,
+                  display_name,
+                  RANK() OVER ( ORDER BY n_solved DESC ) leader_board_position
+                  FROM users
+                ) as user_ranks
+        WHERE id != 0
+        LIMIT 100;
+      SQL
+
+      Database.connection.exec_params(sql).values
     end
   end
 
@@ -128,14 +192,5 @@ module Database
         sql, [ladder.first, ladder.last, ladder.length]
       ).values.length != 0
     end
-
-    # def account_exists?(username)
-    #   sql = 'SELECT id FROM users WHERE display_name = $1'
-    #   @psql.exec_params(sql, [username]).values[0]
-    # end
   end
 end
-
-# p Database.auth('freddieReady', 'abcdefg')
-# Database.new_user("bob96", "123456")
-# p Database.delete_account("bob96", "123456")

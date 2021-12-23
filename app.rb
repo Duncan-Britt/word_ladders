@@ -56,6 +56,13 @@ def ladder_complete?
   WordLadder.adjacent?(session[:steps].last, session[:ladder].last)
 end
 
+def submit_solution
+  first = session[:ladder].first
+  last = session[:ladder].last
+  solution = [first] + session[:steps] + [last]
+  Database::Users.submit_solution(session[:user_id], session[:puzzle_id], solution)
+end
+
 get '/' do
   redirect '/play'
 end
@@ -101,11 +108,12 @@ get '/new_game' do
   redirect '/play'
 end
 
-get '/solutions/:puzzle_id' do
-  puts "\n"
-  p params[:puzzle_id]
-  puts "\n"
+get '/account/solutions' do
+  @puzzles = Database::Users.solutions(session[:user_id])
+  erb :user_solutions, layout: :layout
+end
 
+get '/solutions/:puzzle_id' do
   erb :solutions, layout: :layout
 end
 
@@ -146,18 +154,27 @@ get '/logout' do
 end
 
 get '/account' do
+  redirect '/play' unless session[:user_id]
+
+  @ldr_brd_n = Database::Users.leader_board_position(session[:user_id])
   erb :account, layout: :layout
 end
 
 get '/account/edit/username' do
+  redirect '/play' unless session[:user_id]
+
   erb :edit_username, layout: :layout
 end
 
 get '/account/edit/password' do
+  redirect '/play' unless session[:user_id]
+
   erb :edit_password, layout: :layout
 end
 
 delete '/account' do
+  redirect '/play' unless session[:user_id]
+
   input_username = params[:username]
   input_password = params[:password]
   if session[:username] == input_username &&
@@ -179,6 +196,7 @@ post '/step' do
     session[:steps].push(input_word)
 
     if ladder_complete?
+      submit_solution if session[:user_id]
       session[:complete_ladder] = true
       session[:success] = "Solved! Great Work!"
       status 301
@@ -203,6 +221,8 @@ delete '/step' do
 end
 
 put '/username' do
+  return unless session[:user_id]
+  
   input_username = params[:new_username]
   if Database::Users.account_exists?(input_username)
     status 403
@@ -220,6 +240,8 @@ put '/username' do
 end
 
 put '/password' do
+  return unless session[:user_id]
+
   input_password = params[:new_password]
   res = Database::Users.update_password(session[:user_id], input_password)
   if res.cmd_status == "UPDATE 1"

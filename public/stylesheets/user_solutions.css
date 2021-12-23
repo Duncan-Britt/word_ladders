@@ -1,0 +1,60 @@
+body {
+  background-color: #a3c8c2;
+}
+
+/* MARGIN TOP is greater for the first solution */
+main > .solution {
+  margin: 100px 60px 30px 60px;
+  background: linear-gradient(-0.03turn, var(--cream), #fff, var(--cream));
+  text-align: center;
+  border-radius: 20px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+.dark-mode main > .solution {
+  background: linear-gradient(-0.03turn, #161718, #232427, #161718);
+  box-shadow: rgba(0, 0, 0, 0.35) 5px 15px 25px;
+}
+/* Overwrite Margin top for siblings solution */
+main > .solution ~ .solution {
+  margin: 30px 60px;
+}
+
+.solution {
+  padding: 20px 0;
+}
+
+.solution h1 {
+  font-family: var(--font-cursive);
+  font-size: 80px;
+}
+
+.solution li {
+  font-family: var(--ladder);
+  font-size: 40px;
+  font-weight: bold;
+  color: #387898;
+}
+
+.dark-mode .solution li {
+  color: #79b2a8;
+}
+
+.print {
+  color: #387898;
+  font-size: 40px;
+}
+
+.dark-mode .print {
+  color: #79b2a8;
+}
+
+@media (orientation: landscape) {
+  .solution li {
+    font-size: 40px;
+  }
+
+  .print {
+    font-size: 40px;
+  }
+}

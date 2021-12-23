@@ -1,0 +1,66 @@
+<% content_for :title do %>
+  Your Solutions -
+<% end %>
+
+<% content_for :stylesheet do %>
+  <link rel="stylesheet" href="/stylesheets/user_solutions.css">
+<% end %>
+
+<% content_for :javascript do %>
+<% end %>
+
+<% content_for :nav do %>
+  <ul>
+    <li><a href="/play">play</a></li>
+    <% if session[:user_id] %>
+      <li><a href="/account">account</a></li>
+      <li><a id="logout" href="/logout">logout</a></li>
+    <% else %>
+      <li><a href="/login">login</a></li>
+    <% end %>
+  </ul>
+<% end %>
+
+<% @puzzles.each do |puzzle| %>
+  <div class="solution">
+    <h1>From <span class="print"><%= puzzle["first"] %></span> to <span class="print"><%= puzzle["last"] %></span> in <span class="print"><%= puzzle[:length] %></span> steps or fewer</h1>
+    <ul>
+      <% puzzle["solution"].each  do |step| %>
+        <li><%= step %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<!-- <div class="solution">
+  <h1>From <span class="print">foo</span> to <span class="print">bar</span> in <span class="print">7</span> steps or fewer</h1>
+  <ul>
+    <li>a</li>
+    <li>baz</li>
+    <li>foo</li>
+    <li>bar</li>
+    <li>b</li>
+  </ul>
+</div>
+
+<div class="solution">
+  <h1>From <span class="print">foo</span> to <span class="print">bar</span> in <span class="print">7</span> steps or fewer</h1>
+  <ul>
+    <li>a</li>
+    <li>baz</li>
+    <li>foo</li>
+    <li>bar</li>
+    <li>b</li>
+  </ul>
+</div>
+
+<div class="solution">
+  <h1>From <span class="print">foo</span> to <span class="print">bar</span> in <span class="print">7</span> steps or fewer</h1>
+  <ul>
+    <li>a</li>
+    <li>baz</li>
+    <li>foo</li>
+    <li>bar</li>
+    <li>b</li>
+  </ul>
+</div> -->

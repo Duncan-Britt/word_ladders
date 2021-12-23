@@ -26,10 +26,10 @@
     <th>user</th>
     <th>rank</th>
   </tr>
-  <% @leaderboard.each_with_index do |name, idx| %>
+  <% @leaderboard.each do |tuple| %>
     <tr>
-      <td><%= name %></td>
-      <td><%= idx + 1 %></td>
+      <td><%= tuple[0] %></td>
+      <td><%= tuple[1] %></td>
     </tr>
   <% end %>
 </table>
