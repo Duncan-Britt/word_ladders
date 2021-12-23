@@ -25,10 +25,6 @@ before do
   p session[:ladder]
 end
 
-after do
-  Database.disconnect
-end
-
 def init_ladder
   ladder = WordLadder.new
 

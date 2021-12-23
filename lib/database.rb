@@ -16,10 +16,6 @@ module Database
     return @psql
   end
 
-  def self.disconnect
-    @psql.close
-  end
-
   def self.add_puzzle(ladder, user_id: 0) # AI user id is 0, since first user is 1
     puzzle_id = nil
 
