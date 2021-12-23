@@ -6,7 +6,11 @@ require 'pg'
 DB_NAME = ENV['database'] || 'word_ladders'
 
 module Database
-  @psql = PG::Connection.open(:dbname => DB_NAME)
+  @psql = if Sinatra::Base.production?
+          PG.connect(ENV['DATABASE_URL'])
+        else
+          PG::Connection.open(:dbname => DB_NAME)
+        end
 
   def self.connection
     return @psql
