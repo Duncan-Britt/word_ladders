@@ -21,3 +21,25 @@
     <% end %>
   </ul>
 <% end %>
+
+<section id="ladder" data-length="<%= @length %>">
+  <ul>
+    <% session[:ladder].words.each do |step| %>
+      <li><%= step %></li>
+    <% end %>
+    <% if session[:error] %>
+      <p id="backendFlash" class="flash-error">
+        <%= session.delete(:error) %>
+      </p>
+    <% end %>
+  </ul>
+</section>
+
+<div id="options">
+  <ul>
+    <li><a href="/new_game">next puzzle</a></li>
+    <% if session[:complete_ladder] %>
+    <li><a href="/play/victory">your solution</a></li>
+    <% end %>
+  </ul>
+</div>

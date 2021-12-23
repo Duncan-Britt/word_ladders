@@ -1,4 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(deleteSuccessFlash, 10000);
+  document.querySelector('#unlock').addEventListener('click', e => {
+    if (!confirm("Reveal solution?")) {
+      e.preventDefault();
+    }
+  });
+
   const elements = {};
   const ladder = {};
 
@@ -67,7 +74,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const xhr = new XMLHttpRequest();
     xhr.open('DELETE', '/step');
     xhr.addEventListener('load', _ => {
-      console.log(xhr.status);
       if (xhr.status === 201) {
         delete ladder.prevInput;
         elements.ladder.innerHTML = xhr.response;
@@ -103,7 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (isLastStep() &&
         isAdjacent(elements.input.value, ladder.last) &&
         isAdjacent(elements.input.value, ladder.prev)) {
-          
+
         submitStep();
         return
       }
@@ -175,4 +181,9 @@ function prevSib(element, selector) {
   if (!el) return;
 
   return el.matches(selector) ? el : prevSib(el, selector);
+}
+
+function deleteSuccessFlash() {
+  const flashSuccess = document.querySelector('.flash-success');
+  if (flashSuccess) flashSuccess.remove();
 }

@@ -247,20 +247,40 @@ footer nav ul li {
   font-family: var(--font-main);
 }
 
-/* .code-font{
-  color: var(--maroon);
-  font-size: 20px;
-  font-family: var(--ladder);
-} */
+@media (orientation: landscape) {
+  .cursive {
+    font-size: 50px;
+  }
 
-/* .victory {
-  color: var(--green);
-  font-size: 20px;
-  font-family: var(--ladder);
-} */
+  .print {
+    font-size: 28px;
+  }
 
-/* .red-flash {
-  color: var(--maroon);
-  font-family: var(--font-main);
-  font-size: 15px;
-} */
+  #ladder {
+    font-size: 36px;
+  }
+
+  #ladder input[type=text] {
+    font-size: 36px;
+  }
+
+  #options a {
+    font-size: 28px;
+  }
+
+  .flash-success {
+    font-size: 28px;
+  }
+
+  #header_nav {
+    font-size: 28px;
+  }
+
+  footer {
+    font-size: 28px;
+  }
+
+  #frontendFlash {
+    font-size: 28px;
+  }
+}

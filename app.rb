@@ -60,6 +60,21 @@ get '/' do
   redirect '/play'
 end
 
+get '/about' do
+  # erb :about, layout: :layout
+  redirect 'https://github.com/Duncan-Britt/word_ladders#readme'
+end
+
+get '/contact' do
+  # erb :contact, layout: :layout
+  redirect 'https://github.com/Duncan-Britt'
+end
+
+get '/leaderboard' do
+  @leaderboard = Database::Users.top_100
+  erb :leaderboard, layout: :layout
+end
+
 get '/play' do
   if session[:complete_ladder]
     redirect '/play/victory'
@@ -98,6 +113,32 @@ get '/login' do
   erb :login, layout: :layout
 end
 
+post '/login' do
+  input_username = params[:username]
+  input_password = params[:password]
+  if (session[:user_id] = Database::Users.auth(input_username, input_password))
+    session[:username] = input_username
+    session[:success] = "You have been logged in successfully"
+    redirect '/'
+  else
+    session[:error] = "The username or password you enterd was incorrect"
+    erb :login, layout: :layout
+  end
+end
+
+post '/account' do
+  input_username = params[:username]
+  input_password = params[:password]
+  if (session[:user_id] = Database::Users.new_user(input_username, input_password))
+    session[:username] = input_username
+    session[:success] = "Account created successfully. You are logged in"
+    redirect '/'
+  else
+    session[:error] = "That username is taken. Try another"
+    redirect '/login'
+  end
+end
+
 get '/logout' do
   session.delete(:user_id)
   session.delete(:username)
@@ -114,6 +155,22 @@ end
 
 get '/account/edit/password' do
   erb :edit_password, layout: :layout
+end
+
+delete '/account' do
+  input_username = params[:username]
+  input_password = params[:password]
+  if session[:username] == input_username &&
+     Database::Users.delete_account(input_username, input_password)
+
+    session.delete(:user_id)
+    session.delete(:username)
+    session[:success] = "Your account has been deleted"
+    status 301
+    JSON.generate({ path: '/play' })
+  else
+    status 401
+  end
 end
 
 post '/step' do
@@ -145,32 +202,6 @@ delete '/step' do
   erb :ladder, layout: false
 end
 
-post '/sign_up' do
-  input_username = params[:username]
-  input_password = params[:password]
-  if (session[:user_id] = Database::Users.new_user(input_username, input_password))
-    session[:username] = input_username
-    session[:success] = "Account created successfully. You are logged in"
-    redirect '/'
-  else
-    session[:error] = "That username is taken. Try another"
-    redirect '/login'
-  end
-end
-
-post '/login' do
-  input_username = params[:username]
-  input_password = params[:password]
-  if (session[:user_id] = Database::Users.auth(input_username, input_password))
-    session[:username] = input_username
-    session[:success] = "You have been logged in successfully"
-    redirect '/'
-  else
-    session[:error] = "The username or password you enterd was incorrect"
-    erb :login, layout: :layout
-  end
-end
-
 put '/username' do
   input_username = params[:new_username]
   if Database::Users.account_exists?(input_username)
@@ -199,25 +230,11 @@ put '/password' do
   end
 end
 
-get '/delete_account' do
-  erb :delete_account, layout: :layout
-end
-
-post '/delete_account' do
-  input_username = params[:username]
-  input_password = parrams[:password]
-  if Database::Users.delete_user(input_username, input_password)
-    session.delete(:user_id)
-    session.delete(:username)
-    session[:success] = "Your account has been deleted"
-    redirect '/'
-  else
-    session[:error] = "The username or password you enterd was incorrect"
-    erb :delete_account, layout: :layout
-  end
-end
-
-post '/toggle_dark_mode' do
+put '/toggle_dark_mode' do
   session[:dark] ^= 1
   status 204
+end
+
+not_found do
+  redirect '/play'
 end

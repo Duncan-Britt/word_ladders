@@ -30,3 +30,25 @@ form input[type="text"] {
   margin-top: 50px;
   font-size: 40px;
 }
+
+@media (orientation: landscape) {
+  #login_form {
+    font-size: 20px;
+  }
+
+  #signup_form {
+    font-size: 20px;
+  }
+
+  button {
+    font-size: 20px;
+  }
+
+  form input[type="text"] {
+    font-size: 20px;
+  }
+
+  .flash-error {
+    font-size: 20px;
+  }
+}

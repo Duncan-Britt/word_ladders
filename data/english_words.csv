@@ -209,7 +209,6 @@ Rank,Word,Part of speech,Frequency,Dispersion
 208,like,v,182341,0.95
 209,night,n,184511,0.93
 210,live,v,176144,0.98
-211,Mr,n,188555,0.91
 212,point,n,177481,0.97
 213,believe,v,178397,0.96
 214,hold,v,177368,0.97
@@ -795,7 +794,6 @@ Rank,Word,Part of speech,Frequency,Dispersion
 794,region,n,50914,0.93
 795,television,n,49673,0.95
 796,box,n,49667,0.95
-797,TV,n,49438,0.95
 798,training,n,49997,0.93
 799,pretty,r,50385,0.93
 800,trade,n,49696,0.94
@@ -825,7 +823,6 @@ Rank,Word,Part of speech,Frequency,Dispersion
 824,answer,v,47661,0.95
 825,skill,n,50431,0.90
 826,sister,n,48183,0.94
-827,PM,r,54765,0.82
 828,professor,n,46575,0.97
 829,operation,n,47276,0.95
 830,financial,j,47803,0.94
@@ -1194,7 +1191,6 @@ Rank,Word,Part of speech,Frequency,Dispersion
 1193,brain,n,32852,0.95
 1194,feature,n,33344,0.93
 1195,afternoon,n,33202,0.94
-1196,AM,r,34451,0.90
 1197,weekend,n,33239,0.93
 1198,dozen,m,32432,0.96
 1199,possibility,n,32466,0.95
@@ -1273,7 +1269,6 @@ Rank,Word,Part of speech,Frequency,Dispersion
 1272,district,n,31327,0.92
 1273,shape,n,30396,0.95
 1274,reader,n,31442,0.92
-1275,Ms,n,31610,0.91
 1276,contract,n,30906,0.93
 1277,crowd,n,30542,0.94
 1278,Christian,j,30726,0.94
@@ -2307,7 +2302,6 @@ Rank,Word,Part of speech,Frequency,Dispersion
 2306,essentially,r,15020,0.94
 2307,gene,n,15377,0.92
 2308,enforcement,n,15052,0.94
-2309,vs,i,16003,0.88
 2310,sauce,n,15903,0.88
 2311,independence,n,15259,0.92
 2312,marketing,n,15259,0.92
@@ -2508,7 +2502,6 @@ Rank,Word,Part of speech,Frequency,Dispersion
 2507,occasionally,r,13321,0.95
 2508,mayor,n,13903,0.91
 2509,consideration,n,14047,0.90
-2510,CEO,n,13956,0.91
 2511,secure,v,13181,0.96
 2512,pink,j,13849,0.91
 2513,smoke,v,13438,0.94
@@ -2703,7 +2696,6 @@ Rank,Word,Part of speech,Frequency,Dispersion
 2702,like,r,13238,0.87
 2703,penalty,n,12310,0.93
 2704,match,n,12025,0.95
-2705,ie,r,13724,0.83
 2706,advance,v,12056,0.95
 2707,resort,n,12379,0.92
 2708,destruction,n,12356,0.92
@@ -2850,7 +2842,6 @@ Rank,Word,Part of speech,Frequency,Dispersion
 2849,assistant,j,11391,0.94
 2850,offense,n,11680,0.91
 2851,counter,n,11676,0.91
-2852,DNA,n,11580,0.92
 2853,smell,n,12123,0.88
 2854,potentially,r,11387,0.94
 2855,transfer,n,11830,0.90
@@ -3077,7 +3068,6 @@ Rank,Word,Part of speech,Frequency,Dispersion
 3076,mall,n,10189,0.94
 3077,derive,v,10913,0.87
 3078,scandal,n,10403,0.92
-3079,PC,n,11072,0.86
 3080,helpful,j,10120,0.94
 3081,impress,v,9896,0.96
 3082,heel,n,10288,0.93
@@ -3102,7 +3092,6 @@ Rank,Word,Part of speech,Frequency,Dispersion
 3101,myth,n,10161,0.93
 3102,sophisticated,j,9886,0.95
 3103,cow,n,10032,0.94
-3104,etc,r,10112,0.93
 3105,standing,n,9691,0.97
 3106,asleep,j,10684,0.88
 3107,tennis,n,9985,0.94
@@ -3282,7 +3271,6 @@ Rank,Word,Part of speech,Frequency,Dispersion
 3281,artistic,j,9423,0.93
 3282,discourse,n,10560,0.83
 3283,basket,n,9316,0.94
-3284,ah,u,9788,0.89
 3285,fighting,n,9274,0.94
 3286,impressive,j,9100,0.95
 3287,competitor,n,9377,0.93
@@ -3652,7 +3640,6 @@ Rank,Word,Part of speech,Frequency,Dispersion
 3651,suck,v,8204,0.91
 3652,and/or,c,8481,0.88
 3653,broadcast,n,8130,0.91
-3654,re,i,15773,0.47
 3655,leap,v,8376,0.89
 3656,random,j,7818,0.95
 3657,past,r,7921,0.94
@@ -3961,7 +3948,6 @@ Rank,Word,Part of speech,Frequency,Dispersion
 3960,accounting,n,7319,0.90
 3961,debate,v,6952,0.95
 3962,bias,n,7388,0.89
-3963,huh,u,7563,0.87
 3964,metaphor,n,7461,0.88
 3965,candle,n,7204,0.91
 3966,handle,n,7101,0.93
@@ -4522,7 +4508,6 @@ Rank,Word,Part of speech,Frequency,Dispersion
 4521,pioneer,n,5755,0.94
 4522,organizational,j,6445,0.84
 4523,textbook,n,5968,0.90
-4524,uh,u,6155,0.87
 4525,nasty,j,5682,0.95
 4526,shrink,v,5617,0.96
 4527,model,v,5925,0.91

@@ -1,0 +1,18 @@
+table {
+  font-size: 50px;
+  font-family: var(--ladder);
+  line-height: 1.2em;
+  width: 60%;
+  margin: 100px auto 0 auto;
+}
+
+th {
+  text-align: left;
+}
+
+@media (orientation: landscape) {
+  table {
+    font-size: 30px;
+    width: 40%;
+  }
+}

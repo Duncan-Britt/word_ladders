@@ -195,33 +195,3 @@ end
 # p word_graph.find_vertex_by_data('lone')
 # p word_graph.make_puzzle(20)
 # p word_graph.random_vertex
-
-# TESTS
-# p WordGraph.adjacent?("busy", "abuse") == false
-# p WordGraph.adjacent?("abuse", "busy") == false
-# p WordGraph.adjacent?("buy", "busy") == true
-# p WordGraph.adjacent?("busy", "buy") == true
-# p WordGraph.adjacent?("buoy", "busy") == true
-# p WordGraph.adjacent?("busy", "buoy") == true
-# p WordGraph.adjacent?("bouy", "busy") == false
-# p WordGraph.adjacent?("abuse", "buse") == true
-# p WordGraph.adjacent?("buse", "abuse") == true
-# p WordGraph.adjacent?("buse", "abuse") == true
-# p WordGraph.adjacent?("obuse", "abuse") == true
-# p WordGraph.adjacent?("use", "bus") == false
-# p WordGraph.adjacent?("use", "buse") == true
-# p WordGraph.adjacent?("use", "user") == true
-# p WordGraph.adjacent?("user", "use") == true
-# p WordGraph.adjacent?("used", "user") == true
-# p WordGraph.adjacent?("use", "ruse") == true
-# p WordGraph.adjacent?("ruse", "use") == true
-# p WordGraph.adjacent?("fuse", "use") == true
-# p WordGraph.adjacent?("ruse", "used") == false
-# p WordGraph.adjacent?("used", "ruse") == false
-# p WordGraph.adjacent?("use", "usedd") == false
-# p WordGraph.adjacent?("usedd", "use") == false
-# p WordGraph.adjacent?("agwh", "awh") == true
-# p WordGraph.adjacent?("agwh", "akwh") == true
-# p WordGraph.adjacent?("agwh", "awhg") == false
-# p WordGraph.adjacent?("lack", "back") == true
-# p WordGraph.adjacent?("post", "pot") == true

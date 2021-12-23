@@ -15,7 +15,7 @@ function toggleDarkMode() {
   if (input) input.focus();
 
   fetch('/toggle_dark_mode', {
-    method: 'POST',
+    method: 'PUT',
   }).then(res => {
     // console.log("Request complete! response:", res);
   });

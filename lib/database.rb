@@ -67,8 +67,8 @@ module Database
       db_id = self.auth(input_username, input_password)
       return false unless db_id
       sql = 'DELETE FROM users WHERE id = $1;'
-      Database.connection.exec_params(sql, [db_id])
-      true
+      res = Database.connection.exec_params(sql, [db_id])
+      res.cmd_status == 'DELETE 1'
     end
 
     def self.account_exists?(username)
@@ -93,6 +93,18 @@ module Database
       SQL
       new_password = BCrypt::Password.create(input_password)
       Database.connection.exec_params(sql, [new_password, id])
+    end
+
+    def self.top_100
+      sql = <<~SQL
+        SELECT display_name
+        FROM users
+        WHERE id != 0
+        ORDER BY n_solved DESC
+        LIMIT 100
+      SQL
+
+      Database.connection.exec_params(sql).values.map { |arr| arr[0] }
     end
   end
 

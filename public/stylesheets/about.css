@@ -1,0 +1,21 @@
+h1 {
+  font-family: var(--font-cursive);
+  margin: 100px 0 40px 0;
+  font-size: 120px;
+  text-align: center;
+}
+
+h1 ~ * {
+  font-size: 18px;
+  font-family: var(--font-main);
+}
+
+p {
+  text-indent: 3em;
+  margin: 20px 100px;
+}
+
+ol {
+  list-style: lower-roman;
+  margin: 20px 150px;
+}
