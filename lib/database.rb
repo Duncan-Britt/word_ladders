@@ -2,7 +2,6 @@
 
 require 'bcrypt'
 require 'pg'
-require 'pry'
 
 DB_NAME = ENV['database'] || 'word_ladders'
 
