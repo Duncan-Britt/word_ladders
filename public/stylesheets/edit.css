@@ -16,6 +16,12 @@ input[type="text"] {
   font-family: var(--ladder);
 }
 
+input[type="password"] {
+  widtH: 320px;
+  font-size: 40px;
+  font-family: var(--ladder);
+}
+
 button {
   font-size: 30px;
   font-family: var(--font-main);
@@ -35,6 +41,10 @@ button {
   }
 
   input[type="text"] {
+    font-size: 20px;
+  }
+
+  input[type="password"] {
     font-size: 20px;
   }
 

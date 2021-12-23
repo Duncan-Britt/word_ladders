@@ -26,6 +26,11 @@ form input[type="text"] {
   font-family: var(--ladder);
 }
 
+form input[type="password"] {
+  font-size:40px;
+  font-family: var(--ladder);
+}
+
 .flash-error {
   margin-top: 50px;
   font-size: 40px;
@@ -45,6 +50,10 @@ form input[type="text"] {
   }
 
   form input[type="text"] {
+    font-size: 20px;
+  }
+
+  form input[type="password"] {
     font-size: 20px;
   }
 
