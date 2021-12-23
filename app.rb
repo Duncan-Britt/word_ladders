@@ -103,6 +103,7 @@ end
 
 get '/new_game' do
   session[:complete_ladder] = false
+  session[:unlocked] = false
   session[:ladder] = init_ladder
   session[:steps] = []
   redirect '/play'
@@ -114,6 +115,7 @@ get '/account/solutions' do
 end
 
 get '/solutions/:puzzle_id' do
+  session[:unlocked] = true
   erb :solutions, layout: :layout
 end
 
@@ -173,7 +175,7 @@ get '/account/edit/password' do
 end
 
 delete '/account' do
-  redirect '/play' unless session[:user_id]
+  return unless session[:user_id]
 
   input_username = params[:username]
   input_password = params[:password]
@@ -196,7 +198,7 @@ post '/step' do
     session[:steps].push(input_word)
 
     if ladder_complete?
-      submit_solution if session[:user_id]
+      submit_solution if session[:user_id] && !session[:unlocked]
       session[:complete_ladder] = true
       session[:success] = "Solved! Great Work!"
       status 301
@@ -222,7 +224,7 @@ end
 
 put '/username' do
   return unless session[:user_id]
-  
+
   input_username = params[:new_username]
   if Database::Users.account_exists?(input_username)
     status 403
