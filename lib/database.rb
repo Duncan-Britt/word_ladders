@@ -3,7 +3,7 @@
 require 'bcrypt'
 require 'pg'
 
-DB_NAME = ENV['database'] || 'user_test_pass'
+DB_NAME = ENV['database'] || 'word_ladders'
 
 module Database
   @psql = PG::Connection.open(:dbname => DB_NAME)

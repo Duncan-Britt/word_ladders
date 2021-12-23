@@ -1,7 +1,8 @@
+require 'CSV'
 require 'yaml'
 
 class Vertex
-  attr_accessor :data, :neighbors, :weights, :parent
+  attr_accessor :data, :neighbors, :weights
 
   def initialize(data)
     @data = data
@@ -12,75 +13,27 @@ class Vertex
     idx = (rand * (self.neighbors.length - 1)).round
     self.neighbors[idx]
   end
-
-  def inspect
-    "data: #{@data}, neighbors: #{@neighbors.map { |n| n.data }}"
-  end
-
-  def traverse(end_point)
-    return [self.data, end_point.data] if self.neighbors.include? end_point
-
-    queue = [[self]]
-    while (queue.length != 0)
-      if queue.length > 1_000_000
-        puts ''
-        p :timeout
-        puts ''
-        return :timeout
-      end
-      path = queue.shift
-      node = path[-1]
-      return path.map { |n| n.data } if node == end_point
-
-      node.neighbors.each do |neighbor|
-        next if path.include?(neighbor)
-        new_path = path.dup
-        new_path << neighbor
-        queue.push(new_path)
-      end
-    end
-  end
 end
 
 class WordGraph
   attr_accessor :vertices
 
-  def initialize()
+  def initialize(words)
     @vertices = []
 
-    word_data = Psych.load_file("./data/graph.yml")
-
-    word_data.each do |hash, _|
-      word = hash.keys[0]
+    words.each do |word|
       add_vertex(word)
     end
 
-    i = 0
-    word_data.each do |hash|
-      node = @vertices[i]
-      i += 1
-
-      hash.each do |word, adjacents|
-        adjacents.each do |neighbor|
-          link = find_vertex_by_data(neighbor)
-          node.neighbors.push(link)
-        end
+    @vertices.each do |word|
+      @vertices.each do |other_word|
+        next if word == other_word
+        next unless adjacent?(word.data, other_word.data)
+        word.neighbors << other_word
       end
     end
-  end
 
-  def write
-    File.open("words.yml", "w") do |file|
-      @vertices.each do |vertex|
-        word_data = { vertex.data => vertex.neighbors.map { |n| n.data } }
-        file.write(word_data.to_yaml)
-      end
-    end
-  end
-
-  def make_puzzle(max_length)
-    ladder = make_ladder(max_length)
-    shortest_path(ladder[0], ladder[-1])
+    @vertices.select! { |v| v.neighbors.length != 0 }
   end
 
   def make_ladder(length)
@@ -90,7 +43,7 @@ class WordGraph
       ladder = make_sub_ladder(v: v, length: length, prev: [])
       break if ladder
     end
-    ladder.map { |v| v.data }
+    ladder
   end
 
   def make_sub_ladder(v: random_vertex, length: 3, prev: [])
@@ -99,14 +52,16 @@ class WordGraph
 
     neighbors = v.neighbors - prev
     neighbors.select! do |neighbor|
-      prev.none? { |v| WordGraph.adjacent?(v.data, neighbor.data) }
+      prev.none? { |v| adjacent?(v.data, neighbor.data) }
     end
 
     return nil if neighbors.empty?
     neighbors.shuffle!
+
     sub_ladder = nil
     neighbors.each do |n|
       sub_ladder = make_sub_ladder(v: n, length: length - 1, prev: ladder + prev)
+
       break if sub_ladder
     end
 
@@ -133,7 +88,7 @@ class WordGraph
     vertices.length
   end
 
-  def self.adjacent?(word, other)
+  def adjacent?(word, other)
     if word.length == other.length
       different_chr_count = 0
       i = 0
@@ -181,11 +136,31 @@ class WordGraph
     end
   end
 
-  def shortest_path(word, other)
-    v = find_vertex_by_data(word)
-    o = find_vertex_by_data(other)
-    v.traverse(o)
+  def write
+    data = []
+
+    path = File.expand_path("../../data/graph.yml", __FILE__)
+
+    File.open(path, "w") do |file|
+      @vertices.each do |vertex|
+        word_data = { vertex.data => vertex.neighbors.map { |n| n.data } }
+        data.push(word_data)
+      end
+
+      file.write(Psych.dump(data))
+    end
   end
 end
 
-# english_words = Psych.load_file("words5k.yml")
+common_words = CSV.parse(
+  File.read(File.expand_path("../../data/english_words.csv", __FILE__)),
+  headers: :first_row
+).map { |row| row[1] }
+
+common_words.map! { |word| word.downcase }
+common_words.select! { |word| word.match?(/^[a-z]+$/) }
+common_words.uniq!
+
+word_graph = WordGraph.new(common_words)
+
+word_graph.write

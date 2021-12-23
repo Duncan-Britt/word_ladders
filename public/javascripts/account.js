@@ -51,7 +51,7 @@ function renderAuthForm() {
         </p>
         <p>
           <label for="loginPassword">password:</label>
-          <input id="loginPassword" type="text" name="password" />
+          <input id="loginPassword" type="password" name="password" />
         </p>
         <p>
           <button type="submit">delete account</button>

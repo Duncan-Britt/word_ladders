@@ -223,7 +223,7 @@ put '/password' do
   input_password = params[:new_password]
   res = Database::Users.update_password(session[:user_id], input_password)
   if res.cmd_status == "UPDATE 1"
-    session[:success] = "Username updated successfully"
+    session[:success] = "Password updated successfully"
     status 204
   else
     raise StandarError.new("Datbase not updated properly: #{res.cmd_status}")
