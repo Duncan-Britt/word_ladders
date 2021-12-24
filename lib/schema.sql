@@ -1,6 +1,3 @@
--- DROP TABLE IF EXISTS solutions;
--- DROP TABLE IF EXISTS users;
--- DROP TABLE IF EXISTS puzzles;
 DROP TABLE IF EXISTS generation_words;
 DROP TABLE IF EXISTS validation_words;
 
@@ -30,8 +27,8 @@ CREATE TABLE IF NOT EXISTS solutions (
 CREATE INDEX IF NOT EXISTS ON solutions (user_id);
 CREATE INDEX IF NOT EXISTS ON solutions (puzzle_id);
 
-DELETE FROM solutions a USING solutions b
-WHERE a.id < b.id AND a.user_id = b.user_id AND a.puzzle_id = b.puzzle_id;
+-- DELETE FROM solutions a USING solutions b
+-- WHERE a.id < b.id AND a.user_id = b.user_id AND a.puzzle_id = b.puzzle_id;
 
 ALTER TABLE solutions
 ADD UNIQUE (user_id, puzzle_id);

@@ -31,8 +31,13 @@ document.addEventListener("DOMContentLoaded", () => {
     return ladder.nUsrSteps == ladder.maxLength - 3;
   };
 
+  let allowSubmission = true;
+
   // NEW STEP SUBMISSION REQUEST
   const submitStep = () => {
+    // PREVENT SUBMITING LAST STEP MULTIPLE TIMES
+    if (allowSubmission !== true) return;
+
     // VALIDATION
     if (!isAdjacent(ladder.prev, elements.input.value)) {
       elements.flashError.textContent =
@@ -50,21 +55,32 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
+    // don't submit step again until response is found or timeout
+    allowSubmission = false;
+    setTimeout(() => {
+      allowSubmission = true;
+    }, 10000);
+
     // REQUEST
     const xhr = new XMLHttpRequest();
     xhr.open('POST', '/step');
     xhr.addEventListener('load', _ => {
-      console.log(xhr.status);
-      if (xhr.status === 201) {
-        delete ladder.prevInput;
-        elements.ladder.innerHTML = xhr.response;
-        reset();
-        bind();
-      } else if (xhr.status === 204) {
+      switch (xhr.status) {
+        case 201:
+          allowSubmission = true;
+          delete ladder.prevInput;
+          elements.ladder.innerHTML = xhr.response;
+          reset();
+          bind();
+          break;
+        case 204:
+          allowSubmission = true;
           elements.flashError.textContent = "That word doesn't appear in our dictionary"
           elements.submitFired = false;
-      } else if (xhr.status === 301) {
-        window.location = JSON.parse(xhr.response).path;
+          break;
+        case 301:
+          window.location = JSON.parse(xhr.response).path;
+          break;
       }
     });
     xhr.send(new FormData(elements.form));
