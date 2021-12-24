@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (xhr.status === 204) {
         window.location.href = "/account";
       } else if (xhr.status === 403) {
-        console.log(xhr.response);
         flashMessage = document.querySelector('#flash-error')
         flashMessage.style.visibility = "visible";
         flashMessage.textContent = xhr.response;
