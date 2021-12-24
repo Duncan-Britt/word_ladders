@@ -77,7 +77,7 @@ module Database
       end
 
       return if res == :error
-      
+
       if res.cmd_status == "INSERT 0 1"
         sql = <<~SQL
           UPDATE users
@@ -152,7 +152,8 @@ module Database
         FROM solutions
         INNER JOIN puzzles ON (puzzles.id = solutions.puzzle_id)
         INNER JOIN users ON (solutions.user_id = users.id)
-        WHERE user_id = $1;
+        WHERE solutions.user_id = $1
+        ORDER BY solutions.id DESC;
       SQL
 
       puzzles = []
