@@ -1,6 +1,6 @@
-DROP TABLE IF EXISTS solutions;
-DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS puzzles;
+-- DROP TABLE IF EXISTS solutions;
+-- DROP TABLE IF EXISTS users;
+-- DROP TABLE IF EXISTS puzzles;
 DROP TABLE IF EXISTS generation_words;
 DROP TABLE IF EXISTS validation_words;
 
@@ -23,21 +23,33 @@ CREATE TABLE IF NOT EXISTS puzzles (
 CREATE TABLE IF NOT EXISTS solutions (
   id SERIAL PRIMARY KEY,
   solution TEXT[50] NOT NULL,
-  user_id INTEGER REFERENCES users (id) DEFAULT -1,
+  user_id INTEGER DEFAULT 0 REFERENCES users (id) ON DELETE CASCADE,
   puzzle_id INTEGER NOT NULL REFERENCES puzzles (id) ON DELETE CASCADE
 );
 
-CREATE INDEX ON solutions (user_id);
-CREATE INDEX ON solutions (puzzle_id);
+CREATE INDEX IF NOT EXISTS ON solutions (user_id);
+CREATE INDEX IF NOT EXISTS ON solutions (puzzle_id);
 
-CREATE TABLE IF NOT EXISTS generation_words (
-  word TEXT NOT NULL
-);
+DELETE FROM solutions a USING solutions b
+WHERE a.id < b.id AND a.user_id = b.user_id AND a.puzzle_id = b.puzzle_id;
 
-CREATE INDEX ON generation_words (word);
+ALTER TABLE solutions
+ADD UNIQUE (user_id, puzzle_id);
 
-CREATE TABLE IF NOT EXISTS validation_words (
-  word TEXT NOT NULL
-);
+ALTER TABLE solutions
+ALTER COLUMN user_id SET DEFAULT 0;
 
-CREATE INDEX ON validation_words (word);
+ALTER TABLE solutions
+ALTER COLUMN user_id SET NOT NULL;
+
+-- CREATE TABLE IF NOT EXISTS generation_words (
+--   word TEXT NOT NULL
+-- );
+--
+-- CREATE INDEX ON generation_words (word);
+--
+-- CREATE TABLE IF NOT EXISTS validation_words (
+--   word TEXT NOT NULL
+-- );
+--
+-- CREATE INDEX ON validation_words (word);

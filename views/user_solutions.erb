@@ -23,44 +23,11 @@
 
 <% @puzzles.each do |puzzle| %>
   <div class="solution">
-    <h1>From <span class="print"><%= puzzle["first"] %></span> to <span class="print"><%= puzzle["last"] %></span> in <span class="print"><%= puzzle[:length] %></span> steps or fewer</h1>
+    <h1>From <span class="print"><%= puzzle["first"] %></span> to <span class="print"><%= puzzle["last"] %></span> in <span class="print"><%= puzzle["length"].to_i - 1 %></span> steps or fewer</h1>
     <ul>
-      <% puzzle["solution"].each  do |step| %>
+      <% puzzle["solution"].each do |step| %>
         <li><%= step %></li>
       <% end %>
     </ul>
   </div>
 <% end %>
-
-<!-- <div class="solution">
-  <h1>From <span class="print">foo</span> to <span class="print">bar</span> in <span class="print">7</span> steps or fewer</h1>
-  <ul>
-    <li>a</li>
-    <li>baz</li>
-    <li>foo</li>
-    <li>bar</li>
-    <li>b</li>
-  </ul>
-</div>
-
-<div class="solution">
-  <h1>From <span class="print">foo</span> to <span class="print">bar</span> in <span class="print">7</span> steps or fewer</h1>
-  <ul>
-    <li>a</li>
-    <li>baz</li>
-    <li>foo</li>
-    <li>bar</li>
-    <li>b</li>
-  </ul>
-</div>
-
-<div class="solution">
-  <h1>From <span class="print">foo</span> to <span class="print">bar</span> in <span class="print">7</span> steps or fewer</h1>
-  <ul>
-    <li>a</li>
-    <li>baz</li>
-    <li>foo</li>
-    <li>bar</li>
-    <li>b</li>
-  </ul>
-</div> -->

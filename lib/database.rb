@@ -64,21 +64,29 @@ module Database
     end
 
     def self.submit_solution(user_id, puzzle_id, solution)
-      sql = <<~SQL
-        UPDATE users
-        SET n_solved = n_solved + 1
-        WHERE id = $1;
-      SQL
-
-      Database.connection.exec_params(sql, [user_id.to_i])
-
       sql= <<~SQL
         INSERT INTO solutions (solution, user_id, puzzle_id)
                         VALUES($1, $2, $3)
       SQL
 
       solution = PG::TextEncoder::Array.new.encode(solution)
-      Database.connection.exec_params(sql, [solution, user_id, puzzle_id])
+      begin
+        res = Database.connection.exec_params(sql, [solution, user_id, puzzle_id])
+      rescue PG::UniqueViolation
+        res = :error
+      end
+
+      return if res == :error
+      
+      if res.cmd_status == "INSERT 0 1"
+        sql = <<~SQL
+          UPDATE users
+          SET n_solved = n_solved + 1
+          WHERE id = $1;
+        SQL
+
+        Database.connection.exec_params(sql, [user_id.to_i])
+      end
     end
 
     def self.auth(input_username, input_password)
