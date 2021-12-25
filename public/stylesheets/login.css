@@ -36,7 +36,8 @@ form input[type="password"] {
   font-size: 40px;
 }
 
-@media (orientation: landscape) {
+/* @media (orientation: landscape) { */
+@media (min-width:1001px) {
   #login_form {
     font-size: 20px;
   }

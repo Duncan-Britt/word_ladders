@@ -1,0 +1,23 @@
+<% content_for :title do %>
+  Your Solutions -
+<% end %>
+
+<% content_for :stylesheet do %>
+  <link rel="stylesheet" href="/stylesheets/account_solutions.css">
+<% end %>
+
+<% content_for :javascript do %>
+  <script type="text/javascript" src="/javascripts/account_solutions.js"></script>
+<% end %>
+
+<% content_for :nav do %>
+  <ul>
+    <li><a href="/play">play</a></li>
+    <% if session[:user_id] %>
+      <li><a href="/account">account</a></li>
+      <li><a id="logout" href="/logout">logout</a></li>
+    <% else %>
+      <li><a href="/login">login</a></li>
+    <% end %>
+  </ul>
+<% end %>

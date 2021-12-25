@@ -10,7 +10,8 @@ th {
   text-align: left;
 }
 
-@media (orientation: landscape) {
+/* @media (orientation: landscape) { */
+@media (min-width:1001px) {
   table {
     font-size: 30px;
     width: 40%;

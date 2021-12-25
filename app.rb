@@ -110,8 +110,15 @@ get '/new_game' do
 end
 
 get '/account/solutions' do
-  @puzzles = Database::Users.solutions(session[:user_id])
-  erb :user_solutions, layout: :layout
+  # @puzzles = Database::Users.solutions(session[:user_id])
+  erb :account_solutions, layout: :layout
+end
+
+get '/account/solutions/:offset' do
+  WINDOW = 30
+  JSON.generate(
+    Database::Users.solutions(session[:user_id], WINDOW, params[:offset].to_i)
+  )
 end
 
 get '/solutions/:puzzle_id' do

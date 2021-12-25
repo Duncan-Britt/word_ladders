@@ -35,7 +35,8 @@ button {
   color: var(--maroon);
 }
 
-@media (orientation: landscape) {
+/* @media (orientation: landscape) { */
+@media (min-width:1001px) {
   form {
     font-size: 20px;
   }

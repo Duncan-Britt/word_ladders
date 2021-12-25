@@ -143,7 +143,7 @@ module Database
       Database.connection.exec_params(sql, [new_password, id])
     end
 
-    def self.solutions(user_id)
+    def self.solutions(user_id, limit = nil, offset = 0)
       sql = <<~SQL
         SELECT solutions.solution,
                puzzles.first,
@@ -153,11 +153,15 @@ module Database
         INNER JOIN puzzles ON (puzzles.id = solutions.puzzle_id)
         INNER JOIN users ON (solutions.user_id = users.id)
         WHERE solutions.user_id = $1
-        ORDER BY solutions.id DESC;
+        ORDER BY solutions.id DESC
+        LIMIT $2
+        OFFSET $3;
       SQL
 
       puzzles = []
-      res = Database.connection.exec_params(sql, [user_id])
+      res = Database.connection.exec_params(sql, [user_id, limit, offset])
+      return puzzles unless res
+
       res.each do |puzzle|
         puzzle["solution"] = PG::TextDecoder::Array.new.decode(puzzle["solution"])
         puzzles << puzzle
