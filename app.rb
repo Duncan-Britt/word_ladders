@@ -14,6 +14,7 @@ require_relative './lib/word_ladder.rb'
 configure do
   enable :sessions
   set :session_secret, 'secret'
+  # set :show_exceptions, false # UNCOMMENT TO TEST ERROR PAGE
   set :erb, :escape_html => true
 end
 
@@ -23,6 +24,10 @@ before do
   session[:ladder] ||= init_ladder
   session[:steps] ||= []
   p session[:ladder]
+end
+
+error do
+  erb :error, layout: :layout
 end
 
 def init_ladder
@@ -56,6 +61,10 @@ def ladder_complete?
   WordLadder.adjacent?(session[:steps].last, session[:ladder].last)
 end
 
+def previous_word
+  session[:steps].last || session[:ladder].first
+end
+
 def submit_solution
   first = session[:ladder].first
   last = session[:ladder].last
@@ -83,6 +92,10 @@ get '/leaderboard' do
 end
 
 get '/play' do
+  if params[:nojs]
+    return erb :nojs, layout: :layout
+  end
+
   if session[:complete_ladder]
     redirect '/play/victory'
   end
@@ -110,7 +123,6 @@ get '/new_game' do
 end
 
 get '/account/solutions' do
-  # @puzzles = Database::Users.solutions(session[:user_id])
   erb :account_solutions, layout: :layout
 end
 
@@ -201,6 +213,11 @@ end
 
 post '/step' do
   input_word = params[:step]
+  unless WordLadder.adjacent? input_word, previous_word
+    status 204
+    return
+  end
+
   if is_a_word?(input_word)
     session[:steps].push(input_word)
 

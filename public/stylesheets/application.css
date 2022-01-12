@@ -29,6 +29,7 @@ body {
 
 .flash-error {
   margin: 20px 20px;
+  font-size: 30px; /* NEW */
   font-family: var(--font-main);
   color: var(--maroon);
   text-align: center;
@@ -271,6 +272,11 @@ footer nav ul li {
   }
 
   .flash-success {
+    font-size: 28px;
+  }
+
+  /* NEW */
+  .flash-error {
     font-size: 28px;
   }
 

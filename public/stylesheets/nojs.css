@@ -1,0 +1,10 @@
+#wrapper {
+  width: 85%;
+  margin: 100px auto 0 auto;
+}
+
+p {
+  text-align: center;
+  font-size: 1.5em;
+  line-height: 1.5em;
+}

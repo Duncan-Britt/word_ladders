@@ -107,7 +107,13 @@
         // DELETE FLASH ON BACKSPACE
         if (ladder.prevInput &&
             ladder.prevInput.length > elements.input.value.length) {
-          elements.flashError.innerHTML = '';
+
+          if (elements.input.value.length > ladder.prev.length + 1) {
+            elements.flashError.textContent =
+              "The next step must be adjacent to the previous";
+          } else {
+            elements.flashError.innerHTML = '';
+          }
         }
 
         // DELETE PREVIOUS STEP ON EMPTY BACKSPACE
@@ -123,16 +129,30 @@
         elements.input.value = elements.input.value.toLowerCase();
         ladder.prevInput = elements.input.value;
 
-        if (isLastStep() &&
-          isAdjacent(elements.input.value, ladder.last) &&
-          isAdjacent(elements.input.value, ladder.prev)) {
+        if (elements.input.value.length === ladder.prev.length + 1) {
+          // VALIDATION
+          if (!isAdjacent(ladder.prev, elements.input.value)) {
+            elements.flashError.textContent =
+              "The next step must be adjacent to the previous";
+            elements.submitFired = false;
+            return;
+          }
 
-          submitStep();
-          return
+          if (isLastStep()) {
+            if (!isAdjacent(ladder.last, elements.input.value)) {
+              elements.flashError.textContent =
+                `The next step must be adjacent to "${ladder.last}"`;
+              elements.submitFired = false;
+              return;
+            }
+          }
         }
 
-        if (elements.input.value.length === ladder.prev.length + 1) {
-          submitStep();
+        if (elements.input.value.length > ladder.prev.length + 1) {
+          elements.flashError.textContent =
+            "The next step must be adjacent to the previous";
+          elements.submitFired = false;
+          return;
         }
       });
 
