@@ -93,6 +93,7 @@ end
 
 get '/play' do
   if params[:nojs]
+    @noscript = true
     return erb :nojs, layout: :layout
   end
 

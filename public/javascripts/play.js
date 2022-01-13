@@ -1,44 +1,103 @@
 (function() {
   document.addEventListener("DOMContentLoaded", () => {
     setTimeout(deleteSuccessFlash, 10000);
-    document.querySelector('#unlock').addEventListener('click', e => {
+    s('#unlock').addEventListener('click', e => {
       if (!confirm("Reveal solution?")) {
         e.preventDefault();
       }
     });
 
-    const elements = {};
-    const ladder = {};
+    // INIT
+    reset();
+  });
 
-    // RESET DATA STRUCTURES
-    const reset = () => {
-      elements.input = document.querySelector('#ladder form input[name="step"]');
-      elements.form = document.querySelector('#ladder form');
-      elements.ladder = document.querySelector('#ladder');
-      elements.flashError = document.querySelector('#backendFlash') ||
-                       document.querySelector('#frontendFlash');
-      elements.submitFired = false;
+  let allowSubmission = true;
 
-      ladder.prev = prevSib(elements.ladder.querySelector('#input_li'), 'li')
-                      .textContent;
-      ladder.last = elements.ladder.querySelector('#input_li')
-                            .nextElementSibling.textContent;
-      ladder.maxLength = elements.ladder.dataset.length;
-      ladder.nUsrSteps = elements.ladder.querySelector('ul').dataset.nUsrSteps;
-      elements.input.focus();
+  function isLastStep() {
+    return ladder.nUsrSteps == ladder.maxLength - 3;
+  };
+
+  let elements;
+  let ladder;
+
+  class Elements {
+    constructor() {
+      this.input = s('#ladder form input[name="step"]');
+      this.form = s('#ladder form');
+      this.ladder = s('#ladder');
+      this.flashError = s('#backendFlash') || s('#frontendFlash');
+      this.submitFired = false;
+    }
+  }
+
+  class Ladder {
+    constructor() {
+      this.prev = prevSib(elements.ladder.querySelector('#input_li'), 'li').textContent;
+      this.last = elements.ladder.querySelector('#input_li')
+                          .nextElementSibling.textContent;
+      this.maxLength = elements.ladder.dataset.length;
+      this.nUsrSteps = elements.ladder.querySelector('ul').dataset.nUsrSteps;
+    }
+  }
+
+  function reset() {
+    elements = new Elements();
+    ladder = new Ladder();
+    elements.input.focus();
+
+    bindEventListeners();
+  }
+
+  function bindEventListeners() {
+    elements.input.addEventListener('keyup', typingHandler);
+    elements.form.addEventListener('submit', submitStep);
+  }
+
+  function deletePreviousStep() {
+    fetch('/step', { method: 'DELETE' }).then(async response => {
+      if (response.status == 201) {
+        delete ladder.prevInput;
+        elements.ladder.innerHTML = await response.text();
+        reset();
+      }
+    }).catch(error => {
+      elements.flashError.textContent =
+        "There seems to be a problem with your internet connection."
+    });
+  }
+
+  function deleteSuccessFlash() {
+    const flashSuccess = s('.flash-success');
+    if (flashSuccess) flashSuccess.remove();
+  }
+
+  function typingHandler(e) {
+    // DELETE FLASH ON BACKSPACE
+    if (ladder.prevInput &&
+        ladder.prevInput.length > elements.input.value.length) {
+
+      if (elements.input.value.length > ladder.prev.length + 1) {
+        elements.flashError.textContent =
+          "The next step must be adjacent to the previous";
+      } else {
+        elements.flashError.innerHTML = '';
+      }
     }
 
-    const isLastStep = () => {
-      return ladder.nUsrSteps == ladder.maxLength - 3;
-    };
+    // DELETE PREVIOUS STEP ON EMPTY BACKSPACE
+    if (ladder.hasOwnProperty('prevInput') &&
+        !ladder.prevInput &&
+        !elements.submitFired &&
+        elements.input.value.length <= ladder.prevInput.length) {
 
-    let allowSubmission = true;
+      deletePreviousStep();
+      return;
+    }
 
-    // NEW STEP SUBMISSION REQUEST
-    const submitStep = () => {
-      // PREVENT SUBMITING LAST STEP MULTIPLE TIMES
-      if (allowSubmission !== true) return;
+    elements.input.value = elements.input.value.toLowerCase();
+    ladder.prevInput = elements.input.value;
 
+    if (elements.input.value.length === ladder.prev.length + 1) {
       // VALIDATION
       if (!isAdjacent(ladder.prev, elements.input.value)) {
         elements.flashError.textContent =
@@ -55,122 +114,70 @@
           return;
         }
       }
-
-      // don't submit step again until response is found or timeout
-      allowSubmission = false;
-      setTimeout(() => {
-        allowSubmission = true;
-      }, 10000);
-
-      // REQUEST
-      const xhr = new XMLHttpRequest();
-      xhr.open('POST', '/step');
-      xhr.addEventListener('load', _ => {
-        switch (xhr.status) {
-          case 201:
-            allowSubmission = true;
-            delete ladder.prevInput;
-            elements.ladder.innerHTML = xhr.response;
-            reset();
-            bind();
-            break;
-          case 204:
-            allowSubmission = true;
-            elements.flashError.textContent = "That word doesn't appear in our dictionary"
-            elements.submitFired = false;
-            break;
-          case 301:
-            window.location = JSON.parse(xhr.response).path;
-            break;
-        }
-      });
-      xhr.send(new FormData(elements.form));
     }
 
-    const deletePreviousStep = () => {
-      const xhr = new XMLHttpRequest();
-      xhr.open('DELETE', '/step');
-      xhr.addEventListener('load', _ => {
-        if (xhr.status === 201) {
+    if (elements.input.value.length > ladder.prev.length + 1) {
+      elements.flashError.textContent =
+        "The next step must be adjacent to the previous";
+      elements.submitFired = false;
+      return;
+    }
+  }
+
+  function submitStep(event) {
+    event.preventDefault();
+    elements.submitFired = true;
+
+    // PREVENT SUBMITING LAST STEP MULTIPLE TIMES
+    if (allowSubmission !== true) return;
+
+    // VALIDATION
+    if (!isAdjacent(ladder.prev, elements.input.value)) {
+      elements.flashError.textContent =
+        "The next step must be adjacent to the previous";
+      elements.submitFired = false;
+      return;
+    }
+
+    if (isLastStep()) {
+      if (!isAdjacent(ladder.last, elements.input.value)) {
+        elements.flashError.textContent =
+          `The next step must be adjacent to "${ladder.last}"`;
+        elements.submitFired = false;
+        return;
+      }
+    }
+
+    // don't submit step again until response is found or timeout
+    allowSubmission = false;
+    setTimeout(() => {
+      allowSubmission = true;
+    }, 10000);
+
+    fetch('/step', { method: 'POST', body: new FormData(elements.form) })
+    .then(async response => {
+      switch (response.status) {
+        case 201:
+          allowSubmission = true;
           delete ladder.prevInput;
-          elements.ladder.innerHTML = xhr.response;
+          elements.ladder.innerHTML = await response.text();
           reset();
-          bind();
-        }
-      });
-      xhr.send();
-    }
-
-    // BIND EVENT HANDLERS
-    function bind() {
-      elements.input.addEventListener('keyup', e => {
-        // DELETE FLASH ON BACKSPACE
-        if (ladder.prevInput &&
-            ladder.prevInput.length > elements.input.value.length) {
-
-          if (elements.input.value.length > ladder.prev.length + 1) {
-            elements.flashError.textContent =
-              "The next step must be adjacent to the previous";
-          } else {
-            elements.flashError.innerHTML = '';
-          }
-        }
-
-        // DELETE PREVIOUS STEP ON EMPTY BACKSPACE
-        if (ladder.hasOwnProperty('prevInput') &&
-            !ladder.prevInput &&
-            !elements.submitFired &&
-            elements.input.value.length <= ladder.prevInput.length) {
-
-          deletePreviousStep();
-          return;
-        }
-
-        elements.input.value = elements.input.value.toLowerCase();
-        ladder.prevInput = elements.input.value;
-
-        if (elements.input.value.length === ladder.prev.length + 1) {
-          // VALIDATION
-          if (!isAdjacent(ladder.prev, elements.input.value)) {
-            elements.flashError.textContent =
-              "The next step must be adjacent to the previous";
-            elements.submitFired = false;
-            return;
-          }
-
-          if (isLastStep()) {
-            if (!isAdjacent(ladder.last, elements.input.value)) {
-              elements.flashError.textContent =
-                `The next step must be adjacent to "${ladder.last}"`;
-              elements.submitFired = false;
-              return;
-            }
-          }
-        }
-
-        if (elements.input.value.length > ladder.prev.length + 1) {
-          elements.flashError.textContent =
-            "The next step must be adjacent to the previous";
+          break;
+        case 204:
+          allowSubmission = true;
+          elements.flashError.textContent = "That word doesn't appear in our dictionary"
           elements.submitFired = false;
-          return;
-        }
-      });
+          break;
+        case 301:
+          window.location = await response.json().then(data => data.path);
+          break;
+      }
+    }).catch(error => {
+      elements.flashError.textContent =
+        "There seems to be a problem with your internet connection."
+    });
+  }
 
-      elements.form.addEventListener('submit', e => {
-        e.preventDefault();
-        elements.submitFired = true;
-        submitStep();
-      });
-    }
-
-    // INITIALZE DATA STRUCTURES
-    reset();
-
-    // BIND EVENT HANDLERS
-    bind();
-  });
-
-  // HELPER FUNCTIONS
   function isAdjacent(word, other) {
     if (word.length === other.length) {
       let differentChrCount = 0;
@@ -213,15 +220,15 @@
     }
   }
 
+  // GENERIC UTILITIES
+  function s(selector) {
+    return document.querySelector(selector);
+  }
+
   function prevSib(element, selector) {
     const el = element.previousElementSibling;
     if (!el) return;
 
     return el.matches(selector) ? el : prevSib(el, selector);
-  }
-
-  function deleteSuccessFlash() {
-    const flashSuccess = document.querySelector('.flash-success');
-    if (flashSuccess) flashSuccess.remove();
   }
 }());

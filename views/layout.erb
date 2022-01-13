@@ -28,9 +28,17 @@
         <%== yield_content :nav %>
       </nav>
     </header>
+
     <main>
       <%== yield %>
     </main>
+
+    <% unless @noscript %>
+    <noscript>
+      <meta http-equiv="refresh" content="0;URL='/play?nojs=true'">
+    </noscript>
+    <% end %>
+
     <footer>
       <nav>
         <ul>
