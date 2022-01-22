@@ -77,14 +77,13 @@ get '/' do
 end
 
 get '/about' do
-  # erb :about, layout: :layout
-  redirect 'https://github.com/Duncan-Britt/word_ladders#readme'
+  erb :about, layout: :layout
 end
 
-get '/contact' do
-  # erb :contact, layout: :layout
-  redirect 'https://github.com/Duncan-Britt'
-end
+# get '/contact' do
+#   # erb :contact, layout: :layout
+#   redirect 'https://github.com/Duncan-Britt'
+# end
 
 get '/leaderboard' do
   @leaderboard = Database::Users.top_100

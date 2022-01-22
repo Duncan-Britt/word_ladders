@@ -1,7 +1,7 @@
 h1 {
-  font-family: var(--font-cursive);
+  font-family: var(--font-main);
   margin: 100px 0 40px 0;
-  font-size: 120px;
+  font-size: 40px;
   text-align: center;
 }
 
@@ -11,11 +11,36 @@ h1 ~ * {
 }
 
 p {
-  text-indent: 3em;
-  margin: 20px 100px;
+  /* text-indent: 3em; */
+  margin: 20px 0;
 }
 
 ol {
   list-style: lower-roman;
-  margin: 20px 150px;
+  list-style-position: inside;
+  /* margin: 20px 150px; */
+}
+
+li {
+  text-indent: 1em;
+}
+
+a[href*="//"] {
+  color: var(--ext-link);
+}
+
+.dark-mode a[href*="//"] {
+  color: var(--ext-link-dark);
+}
+
+a[href*="//"]:after {
+  font-weight: 300;
+  font-size: .85em;
+  content: "\2197"; /* top right arrow: ↗ */
+}
+
+article {
+  line-height: 1.5em;
+  margin: 0 auto;
+  max-width: 60vw;
 }
