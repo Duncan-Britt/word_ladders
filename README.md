@@ -1,4 +1,4 @@
-https://word-ladders.herokuapp.com/play
+<!-- https://word-ladders.herokuapp.com/play -->
 
 ## Word Ladders
 
